@@ -9,3 +9,4 @@ lib/
 *.s
 *.o
 
+.DS_Store
