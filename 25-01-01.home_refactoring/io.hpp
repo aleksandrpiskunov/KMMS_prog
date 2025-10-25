@@ -1,11 +1,9 @@
 #ifndef IO_HPP
 #define IO_HPP
 
-namespace biv {
-    namespace io{
-        void readInput(int arr[], int& n);
-        void printOutput(int seq[], int sequenceLength);
-    }
+namespace biv {  
+    void read_input(int arr[], int& size);
+    void print_output(int sequence[], int sequence_length);
 }
 
-#endif 
+#endif

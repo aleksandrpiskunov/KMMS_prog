@@ -1,16 +1,16 @@
 #include "io.hpp"
-#include "LIS.hpp"
+#include "lis.hpp"
 
 int main() {
-    const int MAXN = 100;
-    int n;
-    int arr[MAXN];
-    int lisseq[MAXN];
+    const int MAX_SIZE = 100;
+    int size;
+    int array[MAX_SIZE];
+    int lis_sequence[MAX_SIZE];
     int length;
 
-    biv::io::readInput(arr, n);
-    biv::LIS::computeLIS(arr, n, lisseq, length);
-    biv::io::printOutput(lisseq, length);
+    biv::read_input(array, size);
+    biv::compute_lis(array, size, lis_sequence, length);
+    biv::print_output(lis_sequence, length);
 
     return 0;
 }

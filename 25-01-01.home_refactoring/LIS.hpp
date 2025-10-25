@@ -1,11 +1,9 @@
-// lis.hpp
 #ifndef LIS_HPP
 #define LIS_HPP
 
-namespace biv {
-    namespace LIS{
-        void findPos(int tails[], int length, int key, int& outPos);
-        void computeLIS(int arr[], int n, int lisseq[], int& length);
-    }
+namespace biv {  
+    void find_position(int tails[], int length, int key, int& out_pos);
+    void compute_lis(int arr[], int n, int lis_sequence[], int& length);
 }
-#endif 
+
+#endif

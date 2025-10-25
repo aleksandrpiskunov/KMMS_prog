@@ -1,13 +1,14 @@
-#include "LIS.hpp"
+#include "lis.hpp"
 
-void biv::LIS::findPos(int tails[], int length, int key, int& outPos) {
+void biv::find_position(int tails[], int length, int key, int& out_pos) {
     int left = 0;
     int right = length - 1;
-    outPos = length;
+    out_pos = length;
+    
     while (left <= right) {
         int mid = (left + right) / 2;
         if (tails[mid] >= key) {
-            outPos = mid;
+            out_pos = mid;
             right = mid - 1;
         } else {
             left = mid + 1;
@@ -15,32 +16,33 @@ void biv::LIS::findPos(int tails[], int length, int key, int& outPos) {
     }
 }
 
-void biv::LIS::computeLIS(int arr[], const int n, int lisseq[], int& length) {
-    int tails[100];       
-    int prevIdx[100];     
-    int pos[100];       
+void biv::compute_lis(int arr[], int n, int lis_sequence[], int& length) {
+    const int MAX_SIZE = 100;
+    int tails[MAX_SIZE];       
+    int prev_idx[MAX_SIZE];     
+    int pos[MAX_SIZE];       
     length = 0;
 
     for (int i = 0; i < n; ++i) {
-        int p; 
-        findPos(tails, length, arr[i], p);
+        int position; 
+        find_position(tails, length, arr[i], position);
 
-        tails[p] = arr[i];
-        pos[p] = i;
-        if (p > 0) {
-            prevIdx[i] = pos[p - 1];
+        tails[position] = arr[i];
+        pos[position] = i;
+        if (position > 0) {
+            prev_idx[i] = pos[position - 1];
         } else {
-            prevIdx[i] = -1;
+            prev_idx[i] = -1;
         }
 
-        if (p == length) {
+        if (position == length) {
             ++length;
         }
     }
 
-    int k = pos[length - 1];
+    int current_pos = pos[length - 1];
     for (int i = length - 1; i >= 0; --i) {
-        lisseq[i] = arr[k];
-        k = prevIdx[k];
+        lis_sequence[i] = arr[current_pos];
+        current_pos = prev_idx[current_pos];
     }
 }
