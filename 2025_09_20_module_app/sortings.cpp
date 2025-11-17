@@ -1,8 +1,8 @@
 #include "sortings.hpp"
-using namespace biv::sortings;
+using namespace pav::sortings;
 using namespace std;
 
-void biv::sortings::bubble_sort(int* arr, const int size) {
+void pav::sortings::bubble_sort(int* arr, const int size) {
     bool is_swapped = false;
     int i = 0;
     do{
@@ -19,7 +19,7 @@ void biv::sortings::bubble_sort(int* arr, const int size) {
     } while (is_swapped);
 }    
 
-void biv::sortings::shaker_sort(int* arr, const int size) {
+void pav::sortings::shaker_sort(int* arr, const int size) {
     bool swapped = true;
     int begin = 0;
     int end = size - 1;
@@ -53,7 +53,7 @@ void biv::sortings::shaker_sort(int* arr, const int size) {
     }
 }
 
-void biv::sortings::odd_even_sort(int* arr, const int size) {
+void pav::sortings::odd_even_sort(int* arr, const int size) {
     bool sorted = false;
 
     while (!sorted) {
@@ -79,7 +79,7 @@ void biv::sortings::odd_even_sort(int* arr, const int size) {
     }
 }
 
-void comb_sort(int* arr, const int size) {
+void pav::sortings::comb_sort(int* arr, const int size) {
     int step = size;
     bool swapped = true;
 
@@ -97,6 +97,88 @@ void comb_sort(int* arr, const int size) {
                 arr[i + step] = j;
                 swapped = true;
             }
+        }
+    }
+}
+
+void pav::sortings::quick_sort(int* arr, const int beg, const int end) {
+    if (beg>=end) return;
+     int pivot = arr[(beg + end) / 2];
+    
+    int i = beg, int j = end;
+    while (i <= j) {
+        while (arr[i] < pivot) i++;
+        while (arr[j] > pivot) j--;
+        if (i<= j) std::swap(arr[i++], arr[j--]);
+    }
+    quick_sort(arr, beg, j);
+    quick_sort(arr, i, end);
+}
+
+void pav::sortings::merge(int *arr, int* buf, const int beg, const int mid, const int end){
+    int i = beg, j = mid+1, k = beg;
+
+    while ( i<= mid && j<= end) {
+        if (arr[i] < arr[j]) buf[k++] = arr[i++];
+        else buf[k++] = arr[j++];
+    }
+
+    if (i>mid) {
+        while ( j<= end) buf[k++] = arr[j++];
+    }else {
+        while ( i<= mid) buf[k++] = arr[i++];
+    }
+    for (i = beg; i <= end; ++i) arr[i] = buf[i];
+    
+}
+void pav::sortings::merge_reqursive(int *arr, int* buf, const int beg, const int end){
+    if (beg >= end) return;
+
+    int mid = (beg + end) / 2;
+
+    merge_reqursive(arr, buf, beg, mid);
+    merge_reqursive(arr, buf, mid + 1, end);
+
+    merge(arr, buf, beg, mid, end);
+}
+
+void pav::sortings::selection_sort(int* arr, const int size) {
+    for (int i = 0; i < size - 1; ++i) {
+        int min_index = i;
+        for (int j = i + 1; j < size; ++j) {
+            if (arr[j] < arr[min_index]) {
+                min_index = j;
+            }
+        }
+        if (min_index != i) {
+            int temp = arr[i];
+            arr[i] = arr[min_index];
+            arr[min_index] = temp;
+        }
+    }
+}
+
+void pav::sortings::insertion_sort(int* arr, const int size) {
+    for (int i = 1; i < size; ++i) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            --j;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+void pav::sortings::shell_sort(int* arr, const int size) {
+    for (int gap = size / 2; gap > 0; gap /= 2) {
+        for (int i = gap; i < size; ++i) {
+            int temp = arr[i];
+            int j = i;
+            for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
+                arr[j] = arr[j - gap];
+            }
+            arr[j] = temp;
         }
     }
 }

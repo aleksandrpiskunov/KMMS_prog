@@ -8,9 +8,9 @@ int main() {
     int lis_sequence[MAX_SIZE];
     int length;
 
-    biv::read_input(array, size);
-    biv::compute_lis(array, size, lis_sequence, length);
-    biv::print_output(lis_sequence, length);
+    pav::read_input(array, size);
+    pav::compute_lis(array, size, lis_sequence, length);
+    pav::print_output(lis_sequence, length);
 
     return 0;
 }

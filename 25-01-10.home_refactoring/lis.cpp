@@ -1,6 +1,6 @@
 #include "lis.hpp"
 
-void biv::find_position(int tails[], int length, int key, int& out_pos) {
+void pav::find_position(int tails[], int length, int key, int& out_pos) {
     int left = 0;
     int right = length - 1;
     out_pos = length;
@@ -16,7 +16,7 @@ void biv::find_position(int tails[], int length, int key, int& out_pos) {
     }
 }
 
-void biv::compute_lis(int arr[], int n, int lis_sequence[], int& length) {
+void pav::compute_lis(int arr[], int n, int lis_sequence[], int& length) {
     const int MAX_SIZE = 100;
     int tails[MAX_SIZE];       
     int prev_idx[MAX_SIZE];     
