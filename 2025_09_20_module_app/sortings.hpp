@@ -13,6 +13,8 @@ namespace pav {
 		void selection_sort(int* const arr, const int size);
 		void insertion_sort(int* const arr, const int size);
 		void shell_sort(int* const arr, const int size);
-}
+		void heapify(int* const arr, const int size, int root);
+		void heap_sort(int* const arr, const int size);
+	}
 
 #endif

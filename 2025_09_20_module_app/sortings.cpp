@@ -103,13 +103,18 @@ void pav::sortings::comb_sort(int* arr, const int size) {
 
 void pav::sortings::quick_sort(int* arr, const int beg, const int end) {
     if (beg>=end) return;
-     int pivot = arr[(beg + end) / 2];
+    int pivot = arr[(beg + end) / 2];
     
-    int i = beg, int j = end;
+    int i = beg;
+    int j = end;
     while (i <= j) {
         while (arr[i] < pivot) i++;
         while (arr[j] > pivot) j--;
-        if (i<= j) std::swap(arr[i++], arr[j--]);
+        if (i<= j) {
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
     }
     quick_sort(arr, beg, j);
     quick_sort(arr, i, end);
@@ -182,3 +187,46 @@ void pav::sortings::shell_sort(int* arr, const int size) {
         }
     }
 }
+
+void pav::sortings::heapify(int* arr, const int size, int root) {
+    int largest = root;
+    int left = 2 * root + 1;      // левый потомок
+    int right = 2 * root + 2;     // правый потомок
+
+    // Если левый потомок больше корня
+    if (left < size && arr[left] > arr[largest]) {
+        largest = left;
+    }
+
+    // Если правый потомок больше текущего наибольшего
+    if (right < size && arr[right] > arr[largest]) {
+        largest = right;
+    }
+
+    // Если наибольший элемент — не корень, меняем и рекурсируем
+    if (largest != root) {
+        int temp = arr[root];
+        arr[root] = arr[largest];
+        arr[largest] = temp;
+        heapify(arr, size, largest);
+    }
+}
+
+void pav::sortings::heap_sort(int* arr, const int size) {
+    // Шаг 1: Построить макс-кучу
+    for (int i = size / 2 - 1; i >= 0; --i) {
+        heapify(arr, size, i);
+    }
+
+    // Шаг 2: Извлечь элементы один за другим из кучи
+    for (int i = size - 1; i > 0; --i) {
+        // Переместить корень (максимум) в конец
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+
+        // Восстановить кучу для оставшейся части
+        heapify(arr, i, 0);
+    }
+}
+}  // namespace pav
