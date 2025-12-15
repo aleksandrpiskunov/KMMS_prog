@@ -6,7 +6,7 @@
 namespace {
     const pav::MenuItem* print_children(const pav::MenuItem* current){
         for (int i = 1; i < current->children_count; i++) {
-        std::cout << current->children[i]->title << std::endl;
+            std::cout << current->children[i]->title << std::endl;
         }
         std::cout << current->children[0]->title << std::endl;
         std::cout << "Поле ввода> ";
