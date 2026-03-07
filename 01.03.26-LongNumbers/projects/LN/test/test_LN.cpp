@@ -1,97 +1,115 @@
-#include "LongNumbers.hpp"
 #include <gtest/gtest.h>
+
+#include "LongNumbers.hpp"
+
 using pav::LongNumber;
 
-TEST(LongNumberTest, ConstructorFromString) {
-    LongNumber a("12345");
-    EXPECT_EQ(a, LongNumber("12345"));
-    LongNumber b("-987");
-    EXPECT_EQ(b, LongNumber("-987"));
+class FComparisons : public testing::Test {
+	public:
+		LongNumber 
+			n_2{"-2"}, n_1{"-1"}, n_1_copy{"-1"},
+			
+			p_1{"1"}, p_1_copy{"1"}, p_12{"12"};
+};
+
+TEST_F(FComparisons, equal) {
+	EXPECT_TRUE(p_1 == p_1_copy) << "EXPECT_TRUE: 1 == 1";
+	EXPECT_FALSE(n_1 == p_1) << "EXPECT_FALSE: -1 == 1";
+	EXPECT_FALSE(p_1 == p_12) << "EXPECT_FALSE: 1 == 12";
+	EXPECT_EQ(p_1, p_1_copy) << "EXPECT_EQ: 1 == 1";
+	EXPECT_EQ(n_1, n_1_copy) << "EXPECT_EQ: -1 == -1";
 }
 
-TEST(LongNumberTest, CopyConstructor) {
-    LongNumber a("1234");
-    LongNumber b(a);
-    EXPECT_EQ(a, b);
+TEST_F(FComparisons, not_equal) {
+	EXPECT_TRUE(n_1 != p_1) << "EXPECT_TRUE: -1 != 1";
+	EXPECT_TRUE(p_1 != p_12) << "EXPECT_TRUE: 1 != 12";
+	EXPECT_FALSE(p_1 != p_1_copy) << "EXPECT_FALSE: 1 == 1";
+	ASSERT_NE(p_1, p_12) << "ASSERT_NE: 1 != 12";
+	ASSERT_NE(n_1, p_1) << "ASSERT_NE: -1 != 1";
 }
 
-TEST(LongNumberTest, MoveConstructor) {
-    LongNumber a("5678");
-    LongNumber b(std::move(a));
-    EXPECT_EQ(b, LongNumber("5678"));
+TEST_F(FComparisons, more) {
+	EXPECT_TRUE(p_12 > p_1) << "12 > 1";
+	EXPECT_TRUE(p_1 > n_1) << "1 > -1";
+	EXPECT_TRUE(n_1 > n_2) << "-1 > -2";
+	EXPECT_FALSE(p_1_copy > p_1) << "1 > 1";
+	EXPECT_FALSE(p_1 > p_12) << "1 > 12";
 }
 
-TEST(LongNumberTest, AssignmentOperator) {
-    LongNumber a("111");
-    LongNumber b;
-    b = a;
-    EXPECT_EQ(b, a);
+TEST_F(FComparisons, less) {
+	EXPECT_TRUE(p_1 < p_12) << "1 < 12";
+	EXPECT_TRUE(n_1 < p_1) << "-1 < 1";
+	EXPECT_TRUE(n_2 < n_1) << "-2 < -1";
+	EXPECT_FALSE(p_1_copy < p_1) << "1 < 1";
+	EXPECT_FALSE(p_12 < p_1) << "12 < 1";
 }
 
-TEST(LongNumberTest, MoveAssignmentOperator) {
-    LongNumber a("222");
-    LongNumber b;
-    b = std::move(a);
-    EXPECT_EQ(b, LongNumber("222"));
+class FArithmetic : public testing::Test {
+	public:
+		LongNumber 
+			n_19602{"-19602"}, n_99{"-99"}, n_87{"-87"}, n_17{"-17"},
+			n_16{"-16"}, n_15{"-15"},
+			n_7{"-7"}, n_4{"-4"}, n_3{"-3"}, n_2{"-2"}, n_1{"-1"},
+		
+			p_0{"0"}, p_1{"1"}, p_1_copy{"1"}, p_2{"2"}, p_3{"3"},
+			p_4{"4"}, p_6{"6"}, p_12{"12"}, p_16{"16"}, p_17{"17"}, 
+			p_99{"99"}, p_99_copy{"99"}, 
+			p_113{"113"}, p_198{"198"}, p_1188{"1188"}, p_19602{"19602"},
+			
+			n_100{"-100"}, n_6{"-6"}, p_100{"100"}, p_{"6"};
+};
+
+TEST_F(FArithmetic, summ) {
+	EXPECT_EQ(p_2, p_1 + p_1_copy) << "1 + 1 = 2";
+	EXPECT_EQ(p_0, p_1 + n_1) << "1 + (-1) = 0";
+	EXPECT_EQ(p_198, p_99 + p_99_copy) << "99 + 99 = 198";	
+	EXPECT_EQ(n_87, n_99 + p_12) << "-99 + 12 = -87";	
+	EXPECT_EQ(n_87, p_12 + n_99) << "12 + (-99) = -87";	
 }
 
-TEST(LongNumberTest, EqualityAndInequality) {
-    LongNumber a("123");
-    LongNumber b("123");
-    LongNumber c("321");
-    EXPECT_TRUE(a == b);
-    EXPECT_FALSE(a != b);
-    EXPECT_TRUE(a != c);
+TEST_F(FArithmetic, substraction) {
+	EXPECT_EQ(p_0, p_1 - p_1_copy) << "1 - 1 = 0";
+	EXPECT_EQ(p_2, p_1 - n_1) << "1 + (-1) = 2";
+	EXPECT_EQ(n_87, p_12 - p_99) << "12 - 99 = -87";
 }
 
-TEST(LongNumberTest, ComparisonOperators) {
-    LongNumber a("100");
-    LongNumber b("99");
-    LongNumber c("100");
-    LongNumber d("-101");
-    EXPECT_TRUE(a > b);
-    EXPECT_FALSE(b > a);
-    EXPECT_TRUE(b < a);
-    EXPECT_FALSE(a < b);
-    EXPECT_FALSE(a < c);
-    EXPECT_FALSE(a > c);
-    EXPECT_TRUE(d < a);
+TEST_F(FArithmetic, multiply) {
+	EXPECT_EQ(p_1, p_1 * p_1_copy) << "1 * 1 = 1";
+	EXPECT_EQ(n_1, p_1 * n_1) << "1 * (-1) = -1";
+	EXPECT_EQ(p_0, p_0 * p_99) << "0 * 99 = 0";
+	EXPECT_EQ(p_1188, p_12 * p_99) << "12 * 99 = 1188";
+	EXPECT_EQ(n_19602, p_198 * p_99 * n_1) << "198 * 99 * -1 = -19602";
 }
 
-TEST(LongNumberTest, Addition) {
-    LongNumber a("123");
-    LongNumber b("456");
-    EXPECT_EQ(a + b, LongNumber("579"));
-    LongNumber c("-100");
-    EXPECT_EQ(a + c, LongNumber("23"));
+TEST_F(FArithmetic, division) {
+	EXPECT_EQ(p_2, p_2 / p_1) << "2 / 1 = 2";
+	EXPECT_EQ(p_198, p_19602 / p_99) << "19602 / 99 = 198";
+	EXPECT_EQ(p_99, n_19602 / p_198 / n_1) << "-19602 / 198 / -1  = 99";
 }
 
-TEST(LongNumberTest, Subtraction) {
-    LongNumber a("1000");
-    LongNumber b("1");
-    EXPECT_EQ(a - b, LongNumber("999"));
-    EXPECT_EQ(b - a, LongNumber("-999"));
+TEST_F(FArithmetic, division_full_sign_example) {
+	EXPECT_EQ(p_16, p_100 / p_6) << "100 / 6 = 16";
+	EXPECT_EQ(n_16, p_100 / n_6) << "100 / -6 = -16";
+	EXPECT_EQ(n_17, n_100 / p_6) << "-100 / 6 = -17";
+	EXPECT_EQ(p_17, n_100 / n_6) << "-100 / -6 = 17";
 }
 
-TEST(LongNumberTest, Multiplication) {
-    LongNumber a("12");
-    LongNumber b("13");
-    EXPECT_EQ(a * b, LongNumber("156"));
-    LongNumber c("-2");
-    EXPECT_EQ(a * c, LongNumber("-24"));
+TEST_F(FArithmetic, remainder) {
+	EXPECT_EQ(p_1, p_3 % p_2) << "3 % 2 = 1";
+	EXPECT_EQ(p_6, p_19602 % p_12) << "19602 % 12 = 6";
+	EXPECT_EQ(p_1, n_15 % p_4) << "-15 % 4 = 1";
+	EXPECT_EQ(p_2, p_113 % n_3) << "113 % -3 = 2";
+	EXPECT_EQ(p_6, n_15 % n_7) << "-15 % -7 = 6";
 }
 
-TEST(LongNumberTest, Division) {
-    LongNumber a("1234");
-    LongNumber b("10");
-    EXPECT_EQ(a / b, LongNumber("123"));
-    LongNumber c("-2");
-    EXPECT_EQ(a / c, LongNumber("-617"));
+TEST_F(FArithmetic, remainder_full_sign_example) {
+	EXPECT_EQ(p_4, p_100 % p_6) << "100 % 6 = 4";
+	EXPECT_EQ(p_4, p_100 % n_6) << "100 % -6 = 4";
+	EXPECT_EQ(p_2, n_100 % p_6) << "-100 % 6 = 2";
+	EXPECT_EQ(p_2, n_100 % n_6) << "-100 % -6 = 2";
 }
 
-TEST(LongNumberTest, Modulo) {
-    LongNumber a("1234");
-    LongNumber b("10");
-    EXPECT_EQ(a % b, LongNumber("4"));
+int main(int argc, char **argv) {
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }
-

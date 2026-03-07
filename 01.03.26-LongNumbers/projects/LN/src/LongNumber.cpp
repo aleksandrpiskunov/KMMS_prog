@@ -37,7 +37,6 @@ LongNumber::LongNumber(const char* const str) {// Конструктор из с
         numbers[i] = str[start + length - 1 - i] - '0';
     }
     if (length == 1 && numbers[0] == 0) sign = 1; // 0 всегда положительный
-    // normalize не меняет sign, если число не ноль
 }
 
 
@@ -65,8 +64,8 @@ LongNumber::~LongNumber() {// Деструктор.
 }
 
 
-// Оператор присваивания из строки. 
-LongNumber& LongNumber::operator = (const char* const str) {
+
+LongNumber& LongNumber::operator = (const char* const str) { // Оператор присваивания из строки. 
     if (numbers != nullptr) {
         delete[] numbers;
     }
@@ -308,9 +307,9 @@ LongNumber LongNumber::operator / (const LongNumber& x) const {
         throw std::runtime_error("Division by zero");
     }
 
-    LongNumber dividend(*this);
+    LongNumber dividend(*this);  //делимое 
     dividend.sign = 1;
-    LongNumber divisor(x);
+    LongNumber divisor(x); //делитель 
     divisor.sign = 1;
 
     if (dividend < divisor) {
@@ -320,7 +319,7 @@ LongNumber LongNumber::operator / (const LongNumber& x) const {
     int n = dividend.length;
     LongNumber res(n, sign * x.sign);
 
-    LongNumber remainder;
+    LongNumber remainder; //остаток 
     remainder.length = 0;
     remainder.numbers = new int[n];
     for (int i = 0; i < n; ++i) remainder.numbers[i] = 0;
@@ -342,7 +341,16 @@ LongNumber LongNumber::operator / (const LongNumber& x) const {
     int new_len = n;
     while (new_len > 1 && res.numbers[new_len - 1] == 0) --new_len;
     res.length = new_len;
+
     if (new_len == 1 && res.numbers[0] == 0) res.sign = 1;
+        if (this->sign < 0 && (remainder.length != 1 || remainder.numbers[0] != 0)) {
+        LongNumber one("1");
+        if (res.sign > 0)
+            res = res + one;
+        else
+            res = res - one;
+    }
+
     return res;
 }
 
@@ -354,6 +362,8 @@ LongNumber LongNumber::operator % (const LongNumber& x) const {
     divisor.sign = 1;
 
     if (dividend < divisor) {
+        if (this->sign < 0 && !(dividend == LongNumber("0")))
+            return divisor - dividend;
         return dividend;
     }
 
@@ -374,6 +384,10 @@ LongNumber LongNumber::operator % (const LongNumber& x) const {
         }
     }
     remainder.normalize();
+
+    if (this->sign < 0 && !(remainder == LongNumber("0")))
+        return divisor - remainder;
+
     return remainder;
 }
 
