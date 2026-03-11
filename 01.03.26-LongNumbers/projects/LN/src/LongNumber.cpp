@@ -226,7 +226,17 @@ LongNumber LongNumber::operator + (const LongNumber& x) const {
 
 LongNumber LongNumber::operator - (const LongNumber& x) const {
     if (sign == x.sign) {
-        if ( !(*this < x) ) {
+        bool abs_comp;
+        if (length != x.length) {
+            abs_comp = (length > x.length);
+        } else {
+            abs_comp = true;
+            for (int i = length - 1; i >= 0; --i) {
+                if (numbers[i] > x.numbers[i]) { abs_comp = true; break; }
+                if (numbers[i] < x.numbers[i]) { abs_comp = false; break; }
+            }
+        }
+        if (abs_comp) {
             LongNumber res(std::max(length, x.length) + 1);
             int borrow = 0;
             for (int i = 0; i < std::max(length, x.length); ++i) {
@@ -356,39 +366,7 @@ LongNumber LongNumber::operator / (const LongNumber& x) const {
 
 
 LongNumber LongNumber::operator % (const LongNumber& x) const {
-    LongNumber dividend(*this);
-    dividend.sign = 1;
-    LongNumber divisor(x);
-    divisor.sign = 1;
-
-    if (dividend < divisor) {
-        if (this->sign < 0 && !(dividend == LongNumber("0")))
-            return divisor - dividend;
-        return dividend;
-    }
-
-    int n = dividend.length;
-    LongNumber remainder;
-    remainder.length = 0;
-    remainder.numbers = new int[n];
-    for (int i = 0; i < n; ++i) remainder.numbers[i] = 0;
-
-    for (int i = n - 1; i >= 0; --i) {
-        for (int j = remainder.length; j > 0; --j)
-            remainder.numbers[j] = remainder.numbers[j - 1];
-        if (remainder.length < n) ++remainder.length;
-        remainder.numbers[0] = dividend.numbers[i];
-
-        while (!(remainder < divisor)) {
-            remainder = remainder - divisor;
-        }
-    }
-    remainder.normalize();
-
-    if (this->sign < 0 && !(remainder == LongNumber("0")))
-        return divisor - remainder;
-
-    return remainder;
+    return *this - *this / x * x;
 }
 
 
