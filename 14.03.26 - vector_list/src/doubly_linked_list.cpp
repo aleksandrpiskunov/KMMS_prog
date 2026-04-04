@@ -77,8 +77,6 @@ bool DoublyLinkedList<T>::remove_first(const T& value) noexcept {
             else
                 end = current->prev;
             
-            Node* nextNode = current->next;
-            
             current->prev = current->next = nullptr;
             delete current;
             

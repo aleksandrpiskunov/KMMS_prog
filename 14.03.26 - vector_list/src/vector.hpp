@@ -25,7 +25,6 @@ namespace pav {
 			bool insert(const std::size_t position, const T& value);
 			void print() const noexcept;
 			void push_back(const T& value);
-			bool remove_first(const T& value);
-			
+			bool remove_first(const T& value);	
 	};
 }

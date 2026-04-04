@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include "vector.hpp"
+#include <gtest/gtest.h>
 
 using pav::Vector;
 
@@ -23,10 +23,10 @@ TEST(VectorTest, Insert) {
 	Vector<int> v;
 	v.push_back(1);
 	v.push_back(3);
-	EXPECT_TRUE(v.insert(1, 2)); // вставка в середину
+	EXPECT_TRUE(v.insert(1, 2)); 
 	EXPECT_EQ(v.get_size(), 3);
 	EXPECT_TRUE(v.has_item(2));
-	EXPECT_FALSE(v.insert(100, 5)); // некорректная позиция
+	EXPECT_FALSE(v.insert(100, 5)); 
 }
 
 TEST(VectorTest, RemoveFirst) {
