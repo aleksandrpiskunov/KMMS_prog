@@ -1,7 +1,11 @@
+#define _XOPEN_SOURCE_EXTENDED 1
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <locale.h>
+#include <wchar.h>
 #include <unistd.h> 
 #include <ncurses.h>  
 
@@ -17,7 +21,8 @@ typedef struct SOblect {
 
 char map[mapHeight][mapWidth + 1];
 TObject mario;
-TObject brick[1];
+TObject *brick = NULL;
+int brickLength;
 
 void ClearMap()
 {
@@ -45,7 +50,7 @@ void InitObject(TObject *obj, float xPos, float yPos, float oWidth, float oHeigh
     (*obj).width = oWidth;
     (*obj).height = oHeight;
     (*obj).vertSpeed = 0;
-    (*obj).IsFly = false;  // Инициализация флага полёта
+    (*obj).IsFly = false;  
 }
 
 bool IsCollision(TObject o1, TObject o2);
@@ -55,12 +60,16 @@ void VertMoveObject(TObject *obj)
     (*obj).IsFly = true;
     (*obj).vertSpeed +=0.05;
     SetObjectPos(obj, (*obj).x, (*obj).y + (*obj).vertSpeed);
-    if ( IsCollision ( *obj, brick[0]))
-    {
-        (*obj).y -= (*obj).vertSpeed;
-        (*obj).vertSpeed = 0;
-        (*obj).IsFly = false;
-    }
+
+    for (int i = 0; i < brickLength; i++)
+
+        if ( IsCollision ( *obj, brick[i]))
+        {
+            (*obj).y -= (*obj).vertSpeed;
+            (*obj).vertSpeed = 0;
+            (*obj).IsFly = false;
+            break;
+        }
 }
 
 
@@ -83,7 +92,8 @@ void PutObjectOmMap(TObject obj)
 
 void HorizonMoveMap( float dx)
 {
-    brick[0].x += dx;
+    for (int i = 0; i < brickLength; i++)
+        brick[i].x +=dx;
 }
 
 bool IsCollision(TObject o1, TObject o2){
@@ -91,36 +101,88 @@ bool IsCollision(TObject o1, TObject o2){
            ((o1.y + o1.height) > o2.y) && (o1.y < (o2.y + o2.height)); 
 }
 
+void CreateLevel(){
+    InitObject(&mario, 39, 10, 3 ,3);
+
+    brickLength = 5;
+    brick = new TObject[brickLength];
+    InitObject(brick + 0, 20, 20, 40, 5);
+    InitObject(brick + 1, 60, 15, 10, 10);
+    InitObject(brick + 2, 80, 20, 20, 5);
+    InitObject(brick + 3, 120, 15, 10, 10);
+    InitObject(brick + 4, 150, 20, 40, 5);
+
+
+}
+
 int main()
 {   
+    setlocale(LC_ALL, "");
     initscr();  // Инициализирует ncurses библиотеку
+    cbreak();  // Включает посимвольный ввод без ожидания Enter
     noecho();  // Отключает отображение введённых символов на экран
     nodelay(stdscr, TRUE);  // Делает getch() неблокирующим (не ждёт ввода)
     keypad(stdscr, TRUE);  // Включает обработку специальных клавиш (стрелки, функции)
     
-    InitObject(&mario, 39, 10, 3, 3);
-    InitObject(brick, 20, 20, 40, 5);
+    CreateLevel();
     
-    int ch = 0;  // Получение кода нажатой клавиши
+    int moveDirection = 0;
+    int moveFrames = 0;
+    bool jumpRequested = false;
+
     do
     {
+        wint_t ch = 0;
+        bool shouldExit = false;
+
+        while (get_wch(&ch) != ERR)
+        {
+            if (ch == 27)  // 27 = ESC для выхода
+            {
+                shouldExit = true;
+                break;
+            }
+
+            if (ch == L' ')
+                jumpRequested = true;
+            if (ch == L'a' || ch == L'A' || ch == L'ф' || ch == L'Ф' || ch == KEY_LEFT)
+            {
+                moveDirection = 1;
+                moveFrames = 24;
+            }
+            if (ch == L'd' || ch == L'D' || ch == L'в' || ch == L'В' || ch == KEY_RIGHT)
+            {
+                moveDirection = -1;
+                moveFrames = 24;
+            }
+        }
+
+        if (shouldExit)
+            break;
+
+        if (jumpRequested && mario.IsFly == false)
+            mario.vertSpeed = -1;
+        jumpRequested = false;
+
+        if (moveFrames > 0)
+        {
+            HorizonMoveMap((float)moveDirection * 0.7f);
+            moveFrames--;
+        }
+
         clear();  // Очищает экран
         ClearMap();
-
-        if (ch == ' ' && mario.IsFly == false) mario.vertSpeed = -1;  // Пробел для прыжка
-        if (ch == 'a' || ch == 'A') HorizonMoveMap(1);  // A - движение влево (на macOS)
-        if (ch == 'd' || ch == 'D') HorizonMoveMap(-1);  // D - движение вправо (на macOS)
         
         VertMoveObject(&mario);  // Обновление физики
-        PutObjectOmMap(brick[0]);
+        for (int i = 0; i < brickLength; i++)
+            PutObjectOmMap(brick[i]);
         PutObjectOmMap(mario);
         ShowMap();
         usleep(10000);  // Задержка 10 мс
         
-        int newCh = getch();  // Получает код нажатой клавиши
-        if (newCh != ERR) ch = newCh;  // Обновляем ch только если получен валидный ввод
-    } while (ch != 27);  // 27 = ESC для выхода
+    } while (true);
     
+    delete[] brick;
     endwin();  // Завершает работу ncurses, восстанавливает исходное состояние консоли
     return 0;
 }
