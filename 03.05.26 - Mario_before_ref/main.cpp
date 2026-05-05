@@ -1,12 +1,13 @@
+// Нужен для расширенных возможностей ncurses, включая wide-char ввод через get_wch().
 #define _XOPEN_SOURCE_EXTENDED 1
 
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <locale.h>
-#include <wchar.h>
-#include <unistd.h> 
+#include <locale.h>   // Нужен для setlocale(), чтобы корректно работала кириллица в терминале.
+#include <wchar.h>    // Нужен для wide-символов и wint_t, которые использует get_wch().
+#include <unistd.h>   // usleep() используется для небольшой задержки между кадрами.
 #include <ncurses.h>  
 
 typedef struct SOblect {
@@ -128,6 +129,9 @@ int main()
     
     int moveDirection = 0;
     int moveFrames = 0;
+    // Сколько кадров подряд Mario будет продолжать движение после последнего сигнала от клавиши.
+    const int moveHoldFrames = 40;
+    // Флаг для прыжка: выставляется по нажатию пробела и обрабатывается в основном цикле.
     bool jumpRequested = false;
 
     do
@@ -135,39 +139,56 @@ int main()
         wint_t ch = 0;
         bool shouldExit = false;
 
+        // Считываем все накопившиеся нажатия за этот кадр.
+        // Это нужно, чтобы не терять быстрые нажатия при неблокирующем вводе.
         while (get_wch(&ch) != ERR)
         {
+            // ESC завершает игру.
             if (ch == 27)  // 27 = ESC для выхода
             {
                 shouldExit = true;
                 break;
             }
 
+            // Пробел не прыгает сразу: сначала ставим запрос, а потом применяем его в общем цикле.
             if (ch == L' ')
                 jumpRequested = true;
+            // A/стрелка влево/русская 'ф' запускают движение в одну сторону.
             if (ch == L'a' || ch == L'A' || ch == L'ф' || ch == L'Ф' || ch == KEY_LEFT)
             {
                 moveDirection = 1;
-                moveFrames = 24;
+                // При каждом новом сигнале от клавиши продлеваем движение на несколько кадров.
+                moveFrames = moveHoldFrames;
             }
+            // D/стрелка вправо/русская 'в' запускают движение в другую сторону.
             if (ch == L'd' || ch == L'D' || ch == L'в' || ch == L'В' || ch == KEY_RIGHT)
             {
                 moveDirection = -1;
-                moveFrames = 24;
+                // При каждом новом сигнале от клавиши продлеваем движение на несколько кадров.
+                moveFrames = moveHoldFrames;
             }
         }
 
+        // Если был запрос на выход, выходим из игрового цикла.
         if (shouldExit)
             break;
 
+        // Прыжок срабатывает только если Mario сейчас не в воздухе.
         if (jumpRequested && mario.IsFly == false)
             mario.vertSpeed = -1;
+        // Запрос прыжка обрабатывается один раз за кадр.
         jumpRequested = false;
 
+        // Если Mario в воздухе, не уменьшаем счетчик движения, чтобы удержание клавиши не "сгорало" во время прыжка.
+        bool isAirborne = (mario.IsFly || mario.vertSpeed != 0);
+
+        // Двигаем мир на небольшую величину, пока активен таймер движения.
         if (moveFrames > 0)
         {
-            HorizonMoveMap((float)moveDirection * 0.7f);
-            moveFrames--;
+            HorizonMoveMap((float)moveDirection * 0.3f);
+            // Счетчик уменьшается только на земле; в воздухе удержание сохраняется.
+            if (!isAirborne)
+                moveFrames--;
         }
 
         clear();  // Очищает экран
