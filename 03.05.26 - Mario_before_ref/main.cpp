@@ -16,6 +16,7 @@ typedef struct SOblect {
     float vertSpeed;
     bool IsFly;
     char cType;
+    float horizSpeed;
 } TObject;
 
 #define mapWidth 80
@@ -23,8 +24,13 @@ typedef struct SOblect {
 
 char map[mapHeight][mapWidth + 1];
 TObject mario;
+
 TObject *brick = NULL;
 int brickLength;
+
+TObject *moving = NULL;
+int movingLength;
+
 int level = 1;
 
 void ClearMap()
@@ -55,6 +61,7 @@ void InitObject(TObject *obj, float xPos, float yPos, float oWidth, float oHeigh
     obj->vertSpeed = 0;
     obj->IsFly = false;  
     obj->cType = inType;
+    obj->horizSpeed = 0.2;
 }
 
 bool IsCollision(TObject o1, TObject o2);
@@ -86,6 +93,51 @@ void VertMoveObject(TObject *obj)
         }
 }
 
+void DeleteMoving(int i){
+
+    movingLength--;
+    moving[i] = moving[movingLength];
+    delete[] moving;
+    moving = new TObject[movingLength];
+}
+
+void MarioCollision(){
+    for (int i = 0; i < movingLength; i++){
+        if (IsCollision( mario, moving[i]))
+        {
+            if ( (mario.IsFly == true)   
+                && (mario.vertSpeed > 0)
+                && (mario.y + mario.height < moving[i].y + moving[i].height * 0.5)
+                )
+            {
+                DeleteMoving(i);
+                i--;
+                continue;
+            }
+            else
+                CreateLevel(level);
+        }
+    }
+}
+
+void HorizonMoveObject ( TObject *obj){
+    obj[0].x += obj[0].horizSpeed;
+
+    for (int i = 0; i < brickLength; i++)
+        if (IsCollision(obj[0], brick[i]))
+        {
+            obj[0].x -= obj[0].horizSpeed;
+            obj[0].horizSpeed = - obj[0].horizSpeed;
+            return;
+        }
+    
+    TObject tmp = * obj;
+    VertMoveObject(&tmp);
+    if (tmp.IsFly == true){
+        obj[0].x -= obj[0].horizSpeed;
+        obj[0].horizSpeed = -obj[0].horizSpeed;
+    }
+}
 
 bool IsPosInMap(int x, int y){
     return ( ( x >= 0) && ( x < mapWidth) && ( y>= 0) && ( y < mapHeight));
@@ -117,6 +169,9 @@ void HorizonMoveMap( float dx)
     // Если столкновений нет — сдвигаем мир (кирпичи).
     for (int i = 0; i < brickLength; i++)
         brick[i].x += dx;
+
+    for (int i = 0; i < movingLength; i++)
+        moving[i].x += dx;
           
 }
 
@@ -139,6 +194,10 @@ void CreateLevel(int lvl){
         InitObject(brick + 3, 105, 15, 10, 10, '#');
         InitObject(brick + 4, 120, 20, 40, 5, '#');
         InitObject(brick + 5, 165, 15, 10, 10, '+' );
+        movingLength = 1;
+        delete[] moving;
+        moving = new TObject[movingLength];
+        InitObject( moving + 0, 25 ,10 ,3 ,2, 'o' );
     }
 
     if (lvl == 2){
@@ -233,9 +292,22 @@ int main()
         ClearMap();
         
         VertMoveObject(&mario);  // Обновление физики
+        MarioCollision();
 
         for (int i = 0; i < brickLength; i++)
             PutObjectOmMap(brick[i]);
+
+        for (int i = 0; i < movingLength; i++){
+            VertMoveObject(moving + i);
+            HorizonMoveObject(moving + i);
+            if (moving[i].y > mapHeight){
+                DeleteMoving(i);
+                i--;
+                continue;
+            }
+            PutObjectOmMap(moving[i]);
+        }
+        
         PutObjectOmMap(mario);
 
         ShowMap();
