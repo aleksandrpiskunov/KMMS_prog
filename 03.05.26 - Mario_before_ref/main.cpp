@@ -85,7 +85,6 @@ void VertMoveObject(TObject *obj)
             if (brick[i].cType == '+'){
                 level++;
                 if (level > 2) level = 1;
-
                 CreateLevel(level);
                 usleep(10000);
             }
@@ -96,9 +95,18 @@ void VertMoveObject(TObject *obj)
 void DeleteMoving(int i){
 
     movingLength--;
-    moving[i] = moving[movingLength];
+    TObject *newMoving = new TObject[movingLength];
+
+    for (int j = 0, k = 0; j < movingLength + 1; j++){
+        if (j == i)
+            continue;
+
+        newMoving[k] = moving[j];
+        k++;
+    }
+
     delete[] moving;
-    moving = new TObject[movingLength];
+    moving = newMoving;
 }
 
 void MarioCollision(){
@@ -180,38 +188,65 @@ bool IsCollision(TObject o1, TObject o2){
            ((o1.y + o1.height) > o2.y) && (o1.y < (o2.y + o2.height)); 
 }
 
+TObject *GetNewBrick(){
+    brickLength++;
+    TObject *newBrick = new TObject[brickLength];
+    for (int i = 0; i < brickLength - 1; i++)
+        newBrick[i] = brick[i];
+
+    delete[] brick;
+    brick = newBrick;
+    return brick + brickLength - 1;
+}
+
+TObject *GetNewMoving(){
+    movingLength++;
+    TObject *newMoving = new TObject[movingLength];
+    for (int i = 0; i < movingLength - 1; i++)
+        newMoving[i] = moving[i];
+
+    delete[] moving;
+    moving = newMoving;
+    return moving + movingLength - 1;
+}
+
 void CreateLevel(int lvl){
     InitObject(&mario, 39, 10, 3 ,3, '@');
 
     if (lvl == 1){
-        brickLength = 6;
-        delete[] brick; 
-        brick = new TObject[brickLength];
+        brickLength = 0;
         // el, xpos, ypos, oWidth, oHeight, type
-        InitObject(brick + 0, 20, 20, 40, 5, '#');
-        InitObject(brick + 1, 60, 15, 10, 10, '#');
-        InitObject(brick + 2, 80, 20, 20, 5, '#');
-        InitObject(brick + 3, 105, 15, 10, 10, '#');
-        InitObject(brick + 4, 120, 20, 40, 5, '#');
-        InitObject(brick + 5, 165, 15, 10, 10, '+' );
-        movingLength = 1;
-        delete[] moving;
-        moving = new TObject[movingLength];
-        InitObject( moving + 0, 25 ,10 ,3 ,2, 'o' );
+        InitObject(GetNewBrick(), 20, 20, 40, 5, '#');
+        InitObject(GetNewBrick(), 60, 15, 10, 10, '#');
+        InitObject(GetNewBrick(), 80, 20, 20, 5, '#');
+        InitObject(GetNewBrick(), 105, 15, 10, 10, '#');
+        InitObject(GetNewBrick(), 120, 20, 40, 5, '#');
+        InitObject(GetNewBrick(), 165, 15, 10, 10, '+' );
+        
+        movingLength = 0;
+        InitObject( GetNewMoving(), 25 ,10 ,3 ,2, 'o' );
+        InitObject( GetNewMoving(), 80 ,10 ,3 ,2, 'o' );
+        InitObject( GetNewMoving(), 65,10 ,3 ,2, 'o' );
+        InitObject( GetNewMoving(), 120 ,10 ,3 ,2, 'o' );
+        InitObject( GetNewMoving(), 175,10 ,3 ,2, 'o' );
     }
 
     if (lvl == 2){
-        brickLength = 6;
-        delete[] brick; 
-        brick = new TObject[brickLength];
+        brickLength = 0;
         //(0, 0) - левый верхний угол 
         // el, xpos, ypos, oWidth, oHeight, type
-        InitObject(brick + 0, 10, 20, 60, 5, '#');
-        InitObject(brick + 1, 75, 16, 12, 2, '#');
-        InitObject(brick + 2, 95, 13, 12, 2, '#');
-        InitObject(brick + 3, 115, 10, 12, 2, '#');
-        InitObject(brick + 4, 135, 15, 14, 2, '#');
-        InitObject(brick + 5, 152, 12, 10, 2, '+' );
+        InitObject(GetNewBrick(), 10, 20, 60, 5, '#');
+        InitObject(GetNewBrick(), 75, 16, 12, 2, '#');
+        InitObject(GetNewBrick(), 95, 13, 12, 2, '#');
+        InitObject(GetNewBrick(), 115, 10, 12, 2, '#');
+        InitObject(GetNewBrick(), 135, 15, 14, 2, '#');
+        InitObject(GetNewBrick(), 152, 12, 10, 2, '+' );
+
+        movingLength = 0;
+        InitObject(GetNewMoving(), 18, 10, 3, 2, 'o');
+        InitObject(GetNewMoving(), 72, 10, 3, 2, 'o');
+        InitObject(GetNewMoving(), 98, 7, 3, 2, 'o');
+        InitObject(GetNewMoving(), 128, 8, 3, 2, 'o');
     }
 
 }
