@@ -28,6 +28,13 @@ namespace pav{
 
             void set_pos(const float xPos, const float yPos) { x = xPos; y = yPos; }
 
+                // accessors needed by Game
+                float get_x() const { return x; }
+                float get_y() const { return y; }
+                float get_width() const { return width; }
+                float get_height() const { return height; }
+                char get_type() const { return cType; }
+
             void vert_move(Game &game);
             void horiz_move(Game &game);
 

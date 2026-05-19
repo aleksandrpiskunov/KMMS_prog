@@ -1,5 +1,5 @@
 #pragma once 
-#include "BaseClass.hpp"
+#include "TObject.hpp"
 
 namespace pav{
 	class MovingItem : public TObject {
