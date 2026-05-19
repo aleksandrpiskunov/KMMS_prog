@@ -5,9 +5,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <locale.h>   // Нужен для setlocale(), чтобы корректно работала кириллица в терминале.
-#include <wchar.h>    // Нужен для wide-символов и wint_t, которые использует get_wch().
-#include <unistd.h>   // usleep() используется для небольшой задержки между кадрами.
+#include <locale.h>   // Нужен для setlocale()
+#include <wchar.h>    // Нужен для wide-символов и wint_t
+#include <unistd.h>   // usleep() 
 #include <ncurses.h>  
 #include <string.h>
 
@@ -78,7 +78,7 @@ TObject *GetNewMoving();
 void VertMoveObject(TObject *obj)
 {
     obj->IsFly = true;
-    obj->vertSpeed +=0.06; // немного сильнее гравитация — чуть быстрее вертикальное движение
+    obj->vertSpeed +=0.06; 
     SetObjectPos(obj, obj->x, obj->y + obj->vertSpeed);
 
     for (int i = 0; i < brickLength; i++)
@@ -96,7 +96,6 @@ void VertMoveObject(TObject *obj)
             obj->IsFly = false;
 
             if ((brick[i].cType == '+') && (obj-> cType == '@')){
-                // Mario touched the finish — flash green, then next level
                 level++;
                 if (level > maxLvl) level = 1;
                 if (has_colors()){
@@ -105,7 +104,7 @@ void VertMoveObject(TObject *obj)
                     ShowMap();
                     refresh();
                 }
-                usleep(500000); // 0.5 second flash
+                usleep(500000);
                 CreateLevel(level);
                 if (has_colors()){
                     wbkgd(stdscr, COLOR_PAIR(1));
@@ -214,7 +213,6 @@ void PutScoreOnMap()
 
 void HorizonMoveMap( float dx)
 {
-    // Проверяем столкновение, не меняя положение mario на самом деле.
     TObject test = mario;
     test.x -= dx;
     for (int i = 0; i < brickLength; i++)
@@ -222,7 +220,6 @@ void HorizonMoveMap( float dx)
             return;
         }
 
-    // Если столкновений нет — сдвигаем мир (кирпичи).
     for (int i = 0; i < brickLength; i++)
         brick[i].x += dx;
 
@@ -344,7 +341,7 @@ int main()
 {   
     setlocale(LC_ALL, "");
 
-    initscr();  // Инициализирует ncurses библиотеку
+    initscr();  // Инициализирует ncurses 
     cbreak();  // Включает посимвольный ввод без ожидания Enter
     noecho();  // Отключает отображение введённых символов на экран
 
@@ -359,14 +356,14 @@ int main()
         clear();
     }
 
-    nodelay(stdscr, TRUE);  // Делает getch() неблокирующим (не ждёт ввода)
+    nodelay(stdscr, TRUE);  // Делает getch() неблокирующим 
     keypad(stdscr, TRUE);  // Включает обработку специальных клавиш (стрелки, функции)
     
     CreateLevel(level);
     
     // Направление движения по горизонтали: 1 - влево, -1 - вправо, 0 - стоим.
     // Горизонтальная скорость (используется и для скроллинга карты)
-    const float H_SPEED = 0.3f; // чуть быстрее
+    const float H_SPEED = 0.3f; 
     int moveDirection = 0;
     bool jumpRequested = false;
 
@@ -406,14 +403,13 @@ int main()
             }
         }
 
-        // Если Mario упал ниже карты, перезапускаем уровень (с эффектом смерти)
         if (mario.y > mapHeight) PlayerDead();
 
         if (shouldExit)
             break;
 
         if (jumpRequested && mario.IsFly == false )
-            mario.vertSpeed = -1.1f; // чуть более энергичный старт прыжка
+            mario.vertSpeed = -1.1f; 
 
         jumpRequested = false;
 
@@ -448,11 +444,11 @@ int main()
         PutScoreOnMap();
         ShowMap();
 
-        usleep(10000);  // Задержка 10 мс
+        usleep(10000);  
         
     } while (true);
     
     delete[] brick;
-    endwin();  // Завершает работу ncurses, восстанавливает исходное состояние консоли
+    endwin();  // Завершает работу ncurses
     return 0;
 }
