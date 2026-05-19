@@ -13,7 +13,7 @@
 #include <ncurses.h>
 #include <string.h>
 
-typedef struct SOblect {
+typedef struct TObject {
     float x, y;
     float width, height;
     float vertSpeed;
@@ -37,56 +37,55 @@ typedef struct GameState {
     int maxLvl = 0; 
 } GameState;
 
-bool IsPosInMap(int x, int y);
-bool IsCollision(TObject o1, TObject o2);
+bool IsPosInMap(const int x, const int y);
+bool IsCollision(const TObject &o1, const TObject &o2);
 
 void ClearMap(GameState &state);
-void ShowMap(GameState &state);
-void PutObjectOmMap(TObject obj, GameState &state);
+void ShowMap(const GameState &state);
+void PutObjectOmMap(const TObject &obj, GameState &state);
 void PutScoreOnMap(GameState &state);
 
-void SetObjectPos(TObject *obj, float xPos, float yPos);
-void InitObject(TObject *obj, float xPos, float yPos, float oWidth, float oHeight, char inType);
+void SetObjectPos(TObject *obj, const float xPos, const float yPos);
+void InitObject(TObject *obj, const float xPos, const float yPos, const float oWidth, const float oHeight, const char inType);
 TObject *GetNewBrick(GameState &state);
 TObject *GetNewMoving(GameState &state);
-void DeleteMoving(int i, GameState &state);
+void DeleteMoving(const int i, GameState &state);
 
-void CreateLevel(GameState &state, int lvl);
+void CreateLevel(GameState &state, const int lvl);
 void PlayerDead(GameState &state);
 
 void VertMoveObject(TObject *obj, GameState &state);
 void HorizonMoveObject(TObject *obj, GameState &state);
-void HorizonMoveMap(float dx, GameState &state);
+void HorizonMoveMap(const float dx, GameState &state);
 void MarioCollision(GameState &state);
 
 void keyboard_detect(int &moveDirection, bool &jumpRequested, bool &shouldExit);
 
-bool IsPosInMap(int x, int y){
+bool IsPosInMap(const int x, const int y){
     return ( ( x >= 0) && ( x < mapWidth) && ( y>= 0) && ( y < mapHeight));
 }
 
-bool IsCollision(TObject o1, TObject o2){
+bool IsCollision(const TObject &o1, const TObject &o2){
     return (o1.x + o1.width > o2.x) && (o1.x < ( o2.x + o2.width)) &&
            ((o1.y + o1.height) > o2.y) && (o1.y < (o2.y + o2.height)); 
 }
 
 void ClearMap(GameState &state)
 {
-    for (int i = 0; i < mapWidth; i++)
-        state.map[0][i] = ' ';
-    state.map[0][mapWidth] = '\0';
-    for ( int j = 1; j < mapHeight; j++)
-        snprintf(state.map[j], mapWidth + 1, "%s", state.map[0]);
+    for (int j = 0; j < mapHeight; j++) {
+        memset(state.map[j], ' ', mapWidth);
+        state.map[j][mapWidth] = '\0';
+    }
 }
 
-void ShowMap(GameState &state)
+void ShowMap(const GameState &state)
 {
     for (int j = 0; j < mapHeight; j++)
         mvprintw(j, 0, "%s", state.map[j]);  
     refresh();
 }
 
-void PutObjectOmMap(TObject obj, GameState &state)
+void PutObjectOmMap(const TObject &obj, GameState &state)
 {
     int ix = (int)round(obj.x);
     int iy = (int)round(obj.y);
@@ -109,12 +108,12 @@ void PutScoreOnMap(GameState &state)
 }
 
 
-void SetObjectPos( TObject *obj, float xPos, float yPos){
+void SetObjectPos(TObject *obj, const float xPos, const float yPos){
     obj->x = xPos;
     obj->y = yPos;
 }
 
-void InitObject(TObject *obj, float xPos, float yPos, float oWidth, float oHeight, char inType){
+void InitObject(TObject *obj, const float xPos, const float yPos, const float oWidth, const float oHeight, const char inType){
     SetObjectPos(obj, xPos, yPos);
     obj->width = oWidth;
     obj->height = oHeight;
@@ -148,7 +147,7 @@ TObject *GetNewMoving(GameState &state){
     return state.moving + state.movingLength - 1;
 }
 
-void DeleteMoving(int i, GameState &state){
+void DeleteMoving(const int i, GameState &state){
     if (state.moving == NULL || i < 0 || i >= state.movingLength) return;
 
     int oldLen = state.movingLength;
@@ -169,7 +168,7 @@ void DeleteMoving(int i, GameState &state){
     state.moving = newMoving;
 }
 
-void CreateLevel(GameState &state, int lvl){
+void CreateLevel(GameState &state, const int lvl){
     if (state.brick != NULL){ delete[] state.brick; state.brick = NULL; }
     state.brickLength = 0;
     if (state.moving != NULL){ delete[] state.moving; state.moving = NULL; }
@@ -178,7 +177,8 @@ void CreateLevel(GameState &state, int lvl){
     InitObject(&state.mario, 39, 10, 3 ,3, '@');
     state.score = 0;
 
-    if (lvl == 1){
+    switch (lvl) {
+    case 1:
         // el, xpos, ypos, oWidth, oHeight, type
         InitObject(GetNewBrick(state), 15, 20, 3, 5, '+');
         InitObject(GetNewBrick(state), 20, 20, 40, 5, '#');
@@ -197,9 +197,8 @@ void CreateLevel(GameState &state, int lvl){
 
         InitObject(GetNewMoving(state), 25 ,10 ,3 ,2, 'o' );
         InitObject(GetNewMoving(state), 80 ,10 ,3 ,2, 'o' );
-    }
-
-    if (lvl == 2){
+        break;
+    case 2:
         InitObject(GetNewBrick(state), 15, 20, 3, 5, '+');
         InitObject(GetNewBrick(state), 20, 20, 40, 5, '#');
         InitObject(GetNewBrick(state), 60, 15, 10, 10, '#');
@@ -212,9 +211,8 @@ void CreateLevel(GameState &state, int lvl){
         InitObject(GetNewMoving(state), 65,10 ,3 ,2, 'o' );
         InitObject(GetNewMoving(state), 120 ,10 ,3 ,2, 'o' );
         InitObject(GetNewMoving(state), 175,10 ,3 ,2, 'o' );
-    }
-
-    if (lvl == 3){
+        break;
+    case 3:
         InitObject(GetNewBrick(state), 5, 20, 3, 5, '+');
         InitObject(GetNewBrick(state), 10, 20, 60, 5, '#');
         InitObject(GetNewBrick(state), 75, 16, 12, 2, '#');
@@ -228,6 +226,9 @@ void CreateLevel(GameState &state, int lvl){
         InitObject(GetNewMoving(state), 98, 7, 3, 2, 'o');
         InitObject(GetNewMoving(state), 128, 8, 3, 2, 'o');
         InitObject(GetNewMoving(state), 156, 10, 3, 2, 'o');
+        break;
+    default:
+        break;
     }
     state.maxLvl = 3;
 }
