@@ -234,24 +234,42 @@ void CreateLevel(GameState &state, const int lvl){
 }
 
 void PlayerDead(GameState &state){
+    const int DEATH_DELAY_US = 500000;
+    const int COLOR_DEAD = 2;
+    const int COLOR_NORMAL = 1;
+    
     if (has_colors()){
-        wbkgd(stdscr, COLOR_PAIR(2));
+        wbkgd(stdscr, COLOR_PAIR(COLOR_DEAD));
         clear();
         ShowMap(state);
         refresh();
     }
-    usleep(500000); // 0.5s
+    usleep(DEATH_DELAY_US);
     CreateLevel(state, state.level);
     if (has_colors()){
-        wbkgd(stdscr, COLOR_PAIR(1));
+        wbkgd(stdscr, COLOR_PAIR(COLOR_NORMAL));
         clear();
     }
 }
 
 void VertMoveObject(TObject *obj, GameState &state)
 {
+    const float GRAVITY = 0.06f;
+    const float ITEM_BOUNCE_SPEED = -0.7f;
+    const int LEVEL_COMPLETE_DELAY_US = 500000;
+    const int COLOR_COMPLETE = 3;
+    const int COLOR_NORMAL = 1;
+    const char MYSTERY_BLOCK = '?';
+    const char EMPTY_BLOCK = '-';
+    const char EXIT_BLOCK = '+';
+    const char PLAYER = '@';
+    const char COLLECTIBLE = '$';
+    const char ITEM_Y_OFFSET = 3;
+    const char ITEM_WIDTH = 3;
+    const char ITEM_HEIGHT = 2;
+
     obj->IsFly = true;
-    obj->vertSpeed += 0.06f;
+    obj->vertSpeed += GRAVITY;
     SetObjectPos(obj, obj->x, obj->y + obj->vertSpeed);
 
     if (state.brick == NULL || state.brickLength == 0) return;
@@ -259,29 +277,29 @@ void VertMoveObject(TObject *obj, GameState &state)
     for (int i = 0; i < state.brickLength; i++)
         if (IsCollision(*obj, state.brick[i]))
         {
-            if ((state.brick[i].cType == '?') && (obj->vertSpeed < 0) && (obj == &state.mario)){
-                state.brick[i].cType = '-';
-                InitObject(GetNewMoving(state), state.brick[i].x, state.brick[i].y - 3, 3, 2, '$');
-                state.moving[state.movingLength - 1].vertSpeed = -0.7f;
+            if ((state.brick[i].cType == MYSTERY_BLOCK) && (obj->vertSpeed < 0) && (obj == &state.mario)){
+                state.brick[i].cType = EMPTY_BLOCK;
+                InitObject(GetNewMoving(state), state.brick[i].x, state.brick[i].y - ITEM_Y_OFFSET, ITEM_WIDTH, ITEM_HEIGHT, COLLECTIBLE);
+                state.moving[state.movingLength - 1].vertSpeed = ITEM_BOUNCE_SPEED;
             }
 
             obj->y -= obj->vertSpeed;
             obj->vertSpeed = 0;
             obj->IsFly = false;
 
-            if ((state.brick[i].cType == '+') && (obj->cType == '@')){
+            if ((state.brick[i].cType == EXIT_BLOCK) && (obj->cType == PLAYER)){
                 state.level++;
                 if (state.level > state.maxLvl) state.level = 1;
                 if (has_colors()){
-                    wbkgd(stdscr, COLOR_PAIR(3));
+                    wbkgd(stdscr, COLOR_PAIR(COLOR_COMPLETE));
                     clear();
                     ShowMap(state);
                     refresh();
                 }
-                usleep(500000);
+                usleep(LEVEL_COMPLETE_DELAY_US);
                 CreateLevel(state, state.level);
                 if (has_colors()){
-                    wbkgd(stdscr, COLOR_PAIR(1));
+                    wbkgd(stdscr, COLOR_PAIR(COLOR_NORMAL));
                     clear();
                 }
                 return;
@@ -290,19 +308,21 @@ void VertMoveObject(TObject *obj, GameState &state)
         }
 }
 
-void HorizonMoveObject ( TObject *obj, GameState &state){
+void HorizonMoveObject(TObject *obj, GameState &state){
+    const char ENEMY = 'o';
+
     obj[0].x += obj[0].horizSpeed;
 
     for (int i = 0; i < state.brickLength; i++)
         if (IsCollision(obj[0], state.brick[i]))
         {
             obj[0].x -= obj[0].horizSpeed;
-            obj[0].horizSpeed = - obj[0].horizSpeed;
+            obj[0].horizSpeed = -obj[0].horizSpeed;
             return;
         }
 
-    if (obj[0].cType == 'o'){
-        TObject tmp = * obj;
+    if (obj[0].cType == ENEMY){
+        TObject tmp = obj[0];
         VertMoveObject(&tmp, state);
         if (tmp.IsFly == true){
             obj[0].x -= obj[0].horizSpeed;
@@ -311,14 +331,13 @@ void HorizonMoveObject ( TObject *obj, GameState &state){
     }
 }
 
-void HorizonMoveMap(float dx, GameState &state)
+void HorizonMoveMap(const float dx, GameState &state)
 {
     TObject test = state.mario;
     test.x -= dx;
     for (int i = 0; i < state.brickLength; i++)
-        if ( IsCollision(test, state.brick[i]) ){
+        if (IsCollision(test, state.brick[i]))
             return;
-        }
 
     for (int i = 0; i < state.brickLength; i++)
         state.brick[i].x += dx;
@@ -328,32 +347,34 @@ void HorizonMoveMap(float dx, GameState &state)
 }
 
 void MarioCollision(GameState &state){
+    const char ENEMY = 'o';
+    const char COLLECTIBLE = '$';
+    const int ENEMY_KILL_POINTS = 50;
+    const int COLLECTIBLE_POINTS = 100;
+    const float TOP_COLLISION_THRESHOLD = 0.5f;
+
     if (state.moving == NULL || state.movingLength == 0) return;
     for (int i = 0; i < state.movingLength; i++){
         if (IsCollision(state.mario, state.moving[i]))
         {
-            if (state.moving[i].cType == 'o'){
+            switch (state.moving[i].cType) {
+            case ENEMY:
                 if ((state.mario.IsFly == true)
                     && (state.mario.vertSpeed > 0)
-                    && (state.mario.y + state.mario.height < state.moving[i].y + state.moving[i].height * 0.5)
-                    )
+                    && (state.mario.y + state.mario.height < state.moving[i].y + state.moving[i].height * TOP_COLLISION_THRESHOLD))
                 {
-                    state.score += 50;
+                    state.score += ENEMY_KILL_POINTS;
                     DeleteMoving(i, state);
                     i--;
-                    continue;
-                }
-                else {
+                } else {
                     PlayerDead(state);
                 }
-            }
-
-            if (state.moving[i].cType == '$')
-            {
+                break;
+            case COLLECTIBLE:
                 DeleteMoving(i, state);
-                state.score += 100;
+                state.score += COLLECTIBLE_POINTS;
                 i--;
-                continue;
+                break;
             }
         }
     }
@@ -397,60 +418,61 @@ void keyboard_detect(int &moveDirection, bool &jumpRequested, bool &shouldExit){
 
 int main()
 {   
+    const int COLOR_NORMAL = 1;
+    const int COLOR_DEAD = 2;
+    const int COLOR_COMPLETE = 3;
+    const float HORIZONTAL_SPEED = 0.3f; 
+    const float JUMP_SPEED = -1.1f;
+    const int FRAME_DELAY_US = 10000;
+    const int MOVE_STOP = 0;
+    
     setlocale(LC_ALL, "");
 
-    initscr();  // Инициализирует ncurses 
-    cbreak();  // Включает посимвольный ввод без ожидания Enter
-    noecho();  // Отключает отображение введённых символов на экран
-    nodelay(stdscr, TRUE);  // Делает getch() неблокирующим 
-    keypad(stdscr, TRUE);  // Включает обработку специальных клавиш (стрелки, функции)
+    initscr();
+    cbreak();
+    noecho();
+    nodelay(stdscr, TRUE);
+    keypad(stdscr, TRUE);
 
-    // Инициализация цветов: фон по умолчанию — синий
     if (has_colors()){
         start_color();
         use_default_colors();
-        init_pair(1, COLOR_WHITE, COLOR_BLUE);   // обычный фон — синий
-        init_pair(2, COLOR_WHITE, COLOR_RED);    // фон при смерти — красный
-        init_pair(3, COLOR_WHITE, COLOR_GREEN);  // фон при успешном завершении — зелёный
-        wbkgd(stdscr, COLOR_PAIR(1));
+        init_pair(COLOR_NORMAL, COLOR_WHITE, COLOR_BLUE);
+        init_pair(COLOR_DEAD, COLOR_WHITE, COLOR_RED);
+        init_pair(COLOR_COMPLETE, COLOR_WHITE, COLOR_GREEN);
+        wbkgd(stdscr, COLOR_PAIR(COLOR_NORMAL));
         clear();
     }
 
-    GameState state; // инициализируем игровое состояние
+    GameState state;
     CreateLevel(state, state.level);
     
-    // Направление движения по горизонтали: 1 - влево, -1 - вправо, 0 - стоим.
-    // Горизонтальная скорость (используется и для скроллинга карты)
-    const float H_SPEED = 0.3f; 
-    int moveDirection = 0;
+    int moveDirection = MOVE_STOP;
     bool jumpRequested = false;
 
     do
     {
         bool shouldExit = false;
-
         keyboard_detect(moveDirection, jumpRequested, shouldExit);
 
-        if (state.mario.y > mapHeight) PlayerDead(state);
+        if (state.mario.y > mapHeight) 
+            PlayerDead(state);
 
         if (shouldExit)
             break;
 
-        if (jumpRequested && state.mario.IsFly == false )
-            state.mario.vertSpeed = -1.1f; 
+        if (jumpRequested && state.mario.IsFly == false)
+            state.mario.vertSpeed = JUMP_SPEED;
 
         jumpRequested = false;
 
-        if (moveDirection != 0)
-        {
-
-            HorizonMoveMap((float)moveDirection * H_SPEED, state);
-        }
+        if (moveDirection != MOVE_STOP)
+            HorizonMoveMap(static_cast<float>(moveDirection) * HORIZONTAL_SPEED, state);
 
         clear(); 
         ClearMap(state);
         
-        VertMoveObject(&state.mario, state);  // Обновление физики
+        VertMoveObject(&state.mario, state);
         MarioCollision(state);
 
         for (int i = 0; i < state.brickLength; i++)
@@ -468,16 +490,15 @@ int main()
         }
 
         PutObjectOmMap(state.mario, state);
-
         PutScoreOnMap(state);
         ShowMap(state);
 
-        usleep(10000);  
+        usleep(FRAME_DELAY_US);
         
     } while (true);
     
     if (state.brick != NULL) delete[] state.brick;
     if (state.moving != NULL) delete[] state.moving;
-    endwin();  // Завершает работу ncurses
+    endwin();
     return 0;
 }
