@@ -26,15 +26,15 @@ typedef struct GameState {
     char map[mapHeight][mapWidth + 1];
     TObject mario;
 
-    TObject *brick = NULL;
-    int brickLength = 0;
+    TObject *brick;
+    int brickLength;
 
-    TObject *moving = NULL;
-    int movingLength = 0;
+    TObject *moving;
+    int movingLength;
 
-    int level = 1;
-    int score = 0;
-    int maxLvl = 0; 
+    int level;
+    int score;
+    int maxLvl; 
 } GameState;
 
 bool IsPosInMap(const int x, const int y);
@@ -444,7 +444,15 @@ int main()
         clear();
     }
 
-    GameState state;
+    GameState state{};
+    state.brick = NULL;
+    state.brickLength = 0;
+    state.moving = NULL;
+    state.movingLength = 0;
+    state.level = 1;
+    state.score = 0;
+    state.maxLvl = 0;
+
     CreateLevel(state, state.level);
     
     int moveDirection = MOVE_STOP;
