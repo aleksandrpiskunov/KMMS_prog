@@ -244,9 +244,6 @@ void VertMoveObject(TObject *obj, TObject &mario, TObject *&moving, TObject *&br
     const char EXIT_BLOCK = '+';
     const char PLAYER = '@';
     const char COLLECTIBLE = '$';
-    const char ITEM_Y_OFFSET = 3;
-    const char ITEM_WIDTH = 3;
-    const char ITEM_HEIGHT = 2;
 
     obj->IsFly = true;
     obj->vertSpeed += GRAVITY;
@@ -259,7 +256,7 @@ void VertMoveObject(TObject *obj, TObject &mario, TObject *&moving, TObject *&br
         {
             if ((brick[i].cType == MYSTERY_BLOCK) && (obj->vertSpeed < 0) && (obj == &mario)){
                 brick[i].cType = EMPTY_BLOCK;
-                InitObject(GetNewMoving(movingLength, moving), brick[i].x, brick[i].y - ITEM_Y_OFFSET, ITEM_WIDTH, ITEM_HEIGHT, COLLECTIBLE);
+                InitObject(GetNewMoving(movingLength, moving), brick[i].x, brick[i].y - 3, 3, 2, COLLECTIBLE);
                 moving[movingLength - 1].vertSpeed = ITEM_BOUNCE_SPEED;
             }
 
