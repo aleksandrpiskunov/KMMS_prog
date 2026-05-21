@@ -3,15 +3,15 @@
 #define mapWidth 80
 #define mapHeight 25
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
 #include <locale.h>   // Нужен для setlocale()
-#include <wchar.h>    // Нужен для wide-символов и wint_t
-#include <unistd.h>   // usleep() 
+#include <math.h>
 #include <ncurses.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>   // usleep()
+#include <wchar.h>    // Нужен для wide-символов и wint_t
 
 typedef struct TObject {
     float x, y;
@@ -22,29 +22,24 @@ typedef struct TObject {
     float horizSpeed;
 } TObject;
 
-bool IsPosInMap(const int x, const int y);
-bool IsCollision(const TObject &o1, const TObject &o2);
-
 void ClearMap(char map[mapHeight][mapWidth+1]);
-void ShowMap(char map[mapHeight][mapWidth+1]);
-void PutObjectOmMap(const TObject &obj, char map[mapHeight][mapWidth+1]);
-void PutScoreOnMap(char map[mapHeight][mapWidth+1], int &score);
-
-void SetObjectPos(TObject *obj, const float xPos, const float yPos);
-void InitObject(TObject *obj, const float xPos, const float yPos, const float oWidth, const float oHeight, const char inType);
+void CreateLevel(TObject &mario, TObject *&brick, TObject *&moving, int &movingLength, int &brickLength, const int &lvl, int &score, int &maxLvl);
+void DeleteMoving(const int i, TObject *&moving, int &movingLength);
 TObject *GetNewBrick(int &brickLength, TObject *&brick);
 TObject *GetNewMoving(int &movingLength, TObject *&moving);
-void DeleteMoving(const int i, TObject *&moving, int &movingLength);
-
-void CreateLevel(TObject &mario, TObject *&brick, TObject *&moving, int &movingLength, int &brickLength, const int &lvl, int &score, int &maxLvl);
-void PlayerDead(char map[mapHeight][mapWidth+1], TObject &mario, TObject *&brick, TObject *&moving, int &movingLength, int &brickLength, int &level, int &score, int &maxLvl);
-
-void VertMoveObject(TObject *obj, TObject &mario, TObject *&moving, TObject *&brick, int &brickLength, int &movingLength, int &level, int &maxLvl, int &score, char map[mapHeight][mapWidth+1]);
-void HorizonMoveObject(TObject *obj, TObject &mario, int &brickLength, TObject *&moving, TObject *&brick, int &movingLength, int &level, int &maxLvl, int &score, char map[mapHeight][mapWidth+1]);
 void HorizonMoveMap(const float dx, TObject &mario, int &brickLength, TObject *&brick, int &movingLength, TObject *&moving);
-void MarioCollision(char map[mapHeight][mapWidth+1], TObject &mario, TObject *&moving, int &movingLength, TObject *&brick, int &brickLength, int &score, int &level, int &maxLvl);
-
+void HorizonMoveObject(TObject *obj, TObject &mario, int &brickLength, TObject *&moving, TObject *&brick, int &movingLength, int &level, int &maxLvl, int &score, char map[mapHeight][mapWidth+1]);
+void InitObject(TObject *obj, const float xPos, const float yPos, const float oWidth, const float oHeight, const char inType);
+bool IsCollision(const TObject &o1, const TObject &o2);
+bool IsPosInMap(const int x, const int y);
 void keyboard_detect(int &moveDirection, bool &jumpRequested, bool &shouldExit);
+void MarioCollision(char map[mapHeight][mapWidth+1], TObject &mario, TObject *&moving, int &movingLength, TObject *&brick, int &brickLength, int &score, int &level, int &maxLvl);
+void PlayerDead(char map[mapHeight][mapWidth+1], TObject &mario, TObject *&brick, TObject *&moving, int &movingLength, int &brickLength, int &level, int &score, int &maxLvl);
+void PutObjectOmMap(const TObject &obj, char map[mapHeight][mapWidth+1]);
+void PutScoreOnMap(char map[mapHeight][mapWidth+1], int &score);
+void SetObjectPos(TObject *obj, const float xPos, const float yPos);
+void ShowMap(char map[mapHeight][mapWidth+1]);
+void VertMoveObject(TObject *obj, TObject &mario, TObject *&moving, TObject *&brick, int &brickLength, int &movingLength, int &level, int &maxLvl, int &score, char map[mapHeight][mapWidth+1]);
 
 bool IsPosInMap(const int x, const int y){
     return ( ( x >= 0) && ( x < mapWidth) && ( y>= 0) && ( y < mapHeight));
