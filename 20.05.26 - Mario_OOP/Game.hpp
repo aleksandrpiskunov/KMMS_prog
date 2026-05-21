@@ -3,9 +3,9 @@
 #include <memory>
 #include "Constants.hpp"
 #include "TObject.hpp"
+#include "Mario.hpp"
 
 namespace pav{
-    class Mario;
     class Game {
     private:
         std::vector<std::vector<char>> map;
@@ -16,7 +16,7 @@ namespace pav{
         int brickLength;
         int movingLength;
 
-        std::unique_ptr<TObject> mario;
+        std::unique_ptr<Mario> mario;
         std::vector<std::unique_ptr<TObject>> brick;
         std::vector<std::unique_ptr<TObject>> moving;
     
@@ -46,6 +46,7 @@ namespace pav{
         void delete_moving(std::size_t index);
 
         void put_object_on_map(const TObject &obj);
+        void put_object_on_map(const Mario &player);
 
         void keyboard_detect(int &moveDirection, bool &jumpRequested, bool &shouldExit);
     };

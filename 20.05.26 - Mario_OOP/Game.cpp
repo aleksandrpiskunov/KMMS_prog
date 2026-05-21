@@ -108,6 +108,22 @@ void Game::put_object_on_map(const TObject &obj) {
   }
 }
 
+void Game::put_object_on_map(const Mario &player) {
+  int left = static_cast<int>(std::floor(player.get_x()));
+  int top = static_cast<int>(std::floor(player.get_y()));
+  int right = static_cast<int>(std::floor(player.get_x() + player.get_width()));
+  int bottom = static_cast<int>(std::floor(player.get_y() + player.get_height()));
+
+  for (int j = top; j < bottom; ++j) {
+    if (j < 0 || j >= mapHeight) continue;
+    for (int i = left; i < right; ++i) {
+      if (i < 0 || i >= mapWidth) continue;
+      map[j][i] = player.get_type();
+    }
+    map[j][mapWidth] = '\0';
+  }
+}
+
 void Game::keyboard_detect(int &moveDirection, bool &jumpRequested, bool &shouldExit) {
   int ch = getch();
   moveDirection = 0;
