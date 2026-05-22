@@ -1,14 +1,18 @@
+#define _XOPEN_SOURCE_EXTENDED 1
+
 #include <algorithm>
 #include <ncurses.h>
-#include "Game.hpp"
-#include "Brick.hpp"
-#include "MovingItems.hpp"
-#include "Mario.hpp"
 #include <string>
 #include <cmath>
 #include <sstream>
 
-using pav::Game;
+#include "Game.hpp"
+#include "Brick.hpp"
+#include "MovingItems.hpp"
+#include "Mario.hpp"
+
+
+namespace pav {
 
 Game::Game(int width, int height)
     : map(height, std::vector<char>(width + 1, ' ')),
@@ -19,6 +23,7 @@ Game::Game(int width, int height)
       maxLvl(0),
       brickLength(0),
       movingLength(0) {
+  mario = std::make_unique<Mario>(39, 10, 3, 3, PLAYER);
 }
 
 Game::~Game() = default;
@@ -38,38 +43,111 @@ void Game::show_map() const {
 }
 
 void Game::put_score_on_map() {
-  std::string s = "Score:" + std::to_string(score);
+  std::string s = "Score: " + std::to_string(score);
   for (std::size_t i = 0; i < s.size() && i < static_cast<std::size_t>(mapWidth); ++i) {
-    map[0][i] = s[i];
+    map[1][i + 5] = s[i];
   }
 }
 
 void Game::create_level(int lvl) {
+  if (lvl < 1) {
+    lvl = 1;
+  }
+
   level = lvl;
-  maxLvl = std::max(maxLvl, lvl);
+  score = 0;
+  maxLvl = 3;
+  brick.clear();
+  moving.clear();
+  brickLength = 0;
+  movingLength = 0;
+  mario = std::make_unique<Mario>(39, 10, 3, 3, PLAYER);
+
   clear_map();
-  int groundY = mapHeight - 2; 
+
+  int groundY = mapHeight - 2;
   for (int x = 0; x < mapWidth; ++x) {
     map[groundY][x] = '#';
+  }
+
+  switch (level) {
+    case 1:
+      create_brick(15, 20, 3, 5, '+');
+      create_brick(20, 20, 40, 5, '#');
+      create_brick(30, 12, 5, 3, '?');
+      create_brick(50, 12, 5, 3, '?');
+      create_brick(60, 15, 40, 10, '#');
+      create_brick(60, 5, 10, 3, '-');
+      create_brick(70, 5, 5, 3, '?');
+      create_brick(75, 5, 5, 3, '-');
+      create_brick(80, 5, 5, 3, '?');
+      create_brick(85, 10, 10, 3, '-');
+      create_brick(100, 20, 20, 5, '#');
+      create_brick(120, 15, 20, 10, '#');
+      create_brick(150, 20, 40, 5, '#');
+      create_brick(200, 15, 10, 10, '+');
+
+      create_moving(25, 10, 3, 2, 'o');
+      create_moving(80, 10, 3, 2, 'o');
+      break;
+    case 2:
+      create_brick(15, 20, 3, 5, '+');
+      create_brick(20, 20, 40, 5, '#');
+      create_brick(60, 15, 10, 10, '#');
+      create_brick(80, 20, 20, 5, '#');
+      create_brick(105, 15, 10, 10, '#');
+      create_brick(120, 20, 40, 5, '#');
+      create_brick(165, 15, 10, 10, '+');
+
+      create_moving(25, 10, 3, 2, 'o');
+      create_moving(80, 10, 3, 2, 'o');
+      create_moving(65, 10, 3, 2, 'o');
+      create_moving(120, 10, 3, 2, 'o');
+      create_moving(175, 10, 3, 2, 'o');
+      break;
+    case 3:
+      create_brick(5, 20, 3, 5, '+');
+      create_brick(10, 20, 60, 5, '#');
+      create_brick(75, 16, 12, 2, '#');
+      create_brick(95, 13, 12, 2, '#');
+      create_brick(115, 10, 12, 2, '#');
+      create_brick(135, 15, 14, 2, '#');
+      create_brick(152, 12, 10, 2, '+');
+
+      create_moving(18, 10, 3, 2, 'o');
+      create_moving(72, 10, 3, 2, 'o');
+      create_moving(98, 7, 3, 2, 'o');
+      create_moving(128, 8, 3, 2, 'o');
+      create_moving(156, 10, 3, 2, 'o');
+      break;
+    default:
+      break;
   }
 }
 
 void Game::horizon_move_map(const float dx) {
-  int shift = static_cast<int>(dx);
-  if (shift == 0) return;
-  for (auto &row : map) {
-    if (shift > 0) {
-      for (int k = 0; k < shift; ++k) {
-        for (int i = mapWidth - 1; i > 0; --i) row[i] = row[i - 1];
-        row[0] = ' ';
-      }
-    } else {
-      for (int k = 0; k < -shift; ++k) {
-        for (int i = 0; i < mapWidth - 1; ++i) row[i] = row[i + 1];
-        row[mapWidth - 1] = ' ';
-      }
+  if (!mario) {
+    return;
+  }
+
+  auto is_collision = [](float x1, float y1, float w1, float h1, float x2, float y2, float w2, float h2) {
+    return (x1 + w1 > x2) && (x1 < (x2 + w2)) && ((y1 + h1) > y2) && (y1 < (y2 + h2));
+  };
+
+  float testX = mario->get_x() - dx;
+  for (const auto &block : brick) {
+    if (is_collision(testX, mario->get_y(), mario->get_width(), mario->get_height(),
+                     block->get_x(), block->get_y(), block->get_width(), block->get_height())) {
+      return;
     }
-    row[mapWidth] = '\0';
+  }
+
+  for (const auto &block : brick) {
+    block->set_pos(block->get_x() + dx, block->get_y());
+  }
+
+  for (const auto &item : moving) {
+    item->set_pos(item->get_x() + dx, item->get_y());
   }
 }
 
@@ -125,18 +203,35 @@ void Game::put_object_on_map(const Mario &player) {
 }
 
 void Game::keyboard_detect(int &moveDirection, bool &jumpRequested, bool &shouldExit) {
-  int ch = getch();
-  moveDirection = 0;
+  wint_t ch = 0;
   jumpRequested = false;
   shouldExit = false;
 
-  if (ch == ERR) return; 
-  switch (ch) {
-    case KEY_LEFT: moveDirection = -1; break;
-    case KEY_RIGHT: moveDirection = 1; break;
-    case 'q': shouldExit = true; break;
-    case ' ': jumpRequested = true; break;
-    default: break;
+  while (get_wch(&ch) != ERR) {
+    if (ch == 27) {
+      shouldExit = true;
+      break;
+    }
+
+    if (ch == L' ') {
+      jumpRequested = true;
+    }
+
+    if (ch == L'a' || ch == L'A' || ch == L'ф' || ch == L'Ф' || ch == KEY_LEFT) {
+      if (moveDirection == -1)
+        moveDirection = 0;
+      else if (moveDirection == 0)
+        moveDirection = 1;
+    }
+
+    if (ch == L'd' || ch == L'D' || ch == L'в' || ch == L'В' || ch == KEY_RIGHT) {
+      if (moveDirection == 1)
+        moveDirection = 0;
+      else if (moveDirection == 0)
+        moveDirection = -1;
+    }
   }
 }
+
+} // namespace pav
 

@@ -1,8 +1,18 @@
-#include "TObject.hpp"
 #include "Constants.hpp"
 #include "Game.hpp"
+#include "TObject.hpp"
 
-using pav::TObject;
+#include <locale.h>   // Нужен для setlocale()
+#include <math.h>
+#include <ncurses.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>   // usleep()
+#include <wchar.h>    // Нужен для wide-символов и wint_t
+
+namespace pav{
 
 TObject::TObject(const float xPos, const float yPos, const float oWidth, const float oHeight, const char inType)
 	: x(xPos), y(yPos), width(oWidth), height(oHeight), vertSpeed(0.0f), IsFly(false), cType(inType), horizSpeed(0.0f){};
@@ -12,32 +22,32 @@ void TObject::vert_move(Game &game){
     vertSpeed += GRAVITY;
     set_pos(x, y + vertSpeed);
 
-    if (game.brick == NULL || game.brickLength == 0) return;
+    if (game.get_brick_length() == 0) return;
 
-    for (int i = 0; i < game.brickLength; i++)
-        if (IsCollision(*obj, brick[i]))
+    for (int i = 0; i < game.get_brick_length(); i++){
+        if (TObject::is_collision(*this, *game.get_bricks()[i]))
         {
-            if ((brick[i].cType == MYSTERY_BLOCK) && (obj->vertSpeed < 0) && (obj == &mario)){
-                brick[i].cType = EMPTY_BLOCK;
-                InitObject(GetNewMoving(movingLength, moving), brick[i].x, brick[i].y - ITEM_Y_OFFSET, ITEM_WIDTH, ITEM_HEIGHT, COLLECTIBLE);
-                moving[movingLength - 1].vertSpeed = ITEM_BOUNCE_SPEED;
-            }
+            if ( ((*game.get_bricks()[i]).get_cType() == MYSTERY_BLOCK) && (vertSpeed < 0)){
+                (*game.get_bricks()[i]).set_cType(EMPTY_BLOCK);
+                TObject* new_moving = game.create_moving(game.get_bricks()[i]->get_x(), game.get_bricks()[i]->get_y() - 3, 3, 2, COLLECTIBLE);
+                (*game.get_moving()[game.get_moving_length() - 1]).vertSpeed = ITEM_BOUNCE_SPEED;
+            } 
 
-            obj->y -= obj->vertSpeed;
-            obj->vertSpeed = 0;
-            obj->IsFly = false;
+            y -= vertSpeed;
+            vertSpeed = 0;
+            IsFly = false;
 
-            if ((brick[i].cType == EXIT_BLOCK) && (obj->cType == PLAYER)){
-                level++;
-                if (level > maxLvl) level = 1;
+            if ( ((*game.get_bricks()[i]).get_cType() == EXIT_BLOCK) && (cType == PLAYER)){
+                game.rise_level();
+                if (game.get_level() > game.get_maxLvl()) game.reset_level();
                 if (has_colors()){
                     wbkgd(stdscr, COLOR_PAIR(COLOR_COMPLETE));
                     clear();
-                    ShowMap(map);
+                    game.show_map();
                     refresh();
                 }
-                usleep(LEVEL_COMPLETE_DELAY_US);
-                CreateLevel(mario, brick, moving, movingLength, brickLength, level, score, maxLvl);
+                usleep(50000);
+                game.create_level(game.get_level());
                 if (has_colors()){
                     wbkgd(stdscr, COLOR_PAIR(COLOR_NORMAL));
                     clear();
@@ -46,6 +56,34 @@ void TObject::vert_move(Game &game){
             }
             break;
         }
+    }
 }
 
-void TObject::horiz_move(Game &game){}
+void TObject::horiz_move(Game &game){
+    x += horizSpeed;
+
+    for (int i = 0; i < game.get_brick_length(); i++){
+        if (TObject::is_collision(*this, *game.get_bricks()[i])){
+            x -= horizSpeed;
+            horizSpeed = -horizSpeed;
+            return;
+        }
+
+        if (cType == ENEMY) {
+            bool wasFlying = IsFly;
+            float prevX = x;
+            float prevY = y;
+            float prevVertSpeed = vertSpeed;
+            vert_move(game);
+            if (IsFly == true ){
+                x = prevX;
+                y = prevY;
+                vertSpeed = prevVertSpeed;
+                IsFly = wasFlying;
+                x -= horizSpeed;
+                horizSpeed = -horizSpeed;
+            }
+        }
+    }
+}
+} //namespace pav

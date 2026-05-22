@@ -10,7 +10,7 @@ namespace pav{
     private:
         std::vector<std::vector<char>> map;
         int mapWidth, mapHeight;
-        int level;
+        int level = 0;
         int score;
         int maxLvl; 
         int brickLength;
@@ -49,5 +49,50 @@ namespace pav{
         void put_object_on_map(const Mario &player);
 
         void keyboard_detect(int &moveDirection, bool &jumpRequested, bool &shouldExit);
+
+        const std::vector<std::unique_ptr<TObject>>& get_bricks() const {
+            return brick;
+        }
+
+        int get_brick_length() const {
+            return brickLength;
+        }
+
+        const std::vector<std::unique_ptr<TObject>>& get_moving() const {
+            return moving;
+        }
+
+        int get_moving_length() const {
+            return movingLength;
+            }
+
+        int get_level() const {
+            return level;
+        }
+
+        void rise_level() {
+            level++;
+        }
+
+        void reset_level(){
+            level = 1;
+        }
+
+        int get_score() const {
+            return score;
+        }
+
+        void set_score(const int newScore) {
+            score = newScore;
+        }
+
+        int get_maxLvl() const {
+            return maxLvl;
+        }
+
+        void set_maxLvl(const int newMaxLvl) {
+            maxLvl = newMaxLvl;
+        }
     };
 }
+

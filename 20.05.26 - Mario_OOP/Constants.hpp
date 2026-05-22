@@ -6,6 +6,7 @@ namespace pav {
 
     inline constexpr float GRAVITY = 0.06f;
     inline constexpr float ITEM_BOUNCE_SPEED = -0.7f;
+    inline constexpr int COLOR_DEAD = 2;
     inline constexpr int COLOR_COMPLETE = 3;
     inline constexpr int COLOR_NORMAL = 1;
     inline constexpr char MYSTERY_BLOCK = '?';
@@ -13,4 +14,5 @@ namespace pav {
     inline constexpr char EXIT_BLOCK = '+';
     inline constexpr char PLAYER = '@';
     inline constexpr char COLLECTIBLE = '$';
+    inline constexpr char ENEMY = 'o';
 }

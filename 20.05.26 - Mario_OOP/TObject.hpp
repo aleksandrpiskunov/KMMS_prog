@@ -38,6 +38,14 @@ namespace pav{
             void horiz_move(Game &game);
 
             virtual void update(Game &game) = 0;
+
+            char get_cType() const{
+                return cType;
+            }
+
+            void set_cType(char type){
+                cType = type;
+            }
     };
 
 }
