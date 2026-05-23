@@ -7,15 +7,6 @@
 
 namespace pav {
 
-namespace {
-bool is_collision(const Mario &mario, const BaseObject &object) {
-	return (mario.get_x() + mario.get_width() > object.get_x()) &&
-		   (mario.get_x() < (object.get_x() + object.get_width())) &&
-		   ((mario.get_y() + mario.get_height()) > object.get_y()) &&
-		   (mario.get_y() < (object.get_y() + object.get_height()));
-}
-}
-
 void Mario::update(Game &game) {
 	IsFly = true;
 	vertSpeed += GRAVITY;

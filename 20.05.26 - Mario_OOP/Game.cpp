@@ -149,13 +149,13 @@ void Game::horizon_move_map(const float dx) {
 	}
 }
 
-TObject* Game::create_brick(const float x, const float y, const float w, const float h, const char type) {
+BaseObject* Game::create_brick(const float x, const float y, const float w, const float h, const char type) {
 	brick.emplace_back(std::make_unique<pav::Brick>(x, y, w, h, type));
 	++brickLength;
 	return brick.back().get();
 }
 
-TObject* Game::create_moving(const float x, const float y, const float w, const float h, const char type) {
+BaseObject* Game::create_moving(const float x, const float y, const float w, const float h, const char type) {
 	moving.emplace_back(std::make_unique<pav::MovingItem>(x, y, w, h, type));
 	moving.back()->set_horiz_speed(0.2f);
 	++movingLength;
@@ -169,7 +169,7 @@ void Game::delete_moving(std::size_t index) {
 	}
 }
 
-void Game::put_object_on_map(const TObject &obj) {
+void Game::put_object_on_map(const BaseObject &obj) {
 	int left = static_cast<int>(std::round(obj.get_x()));
 	int top = static_cast<int>(std::round(obj.get_y()));
 	int right = static_cast<int>(std::round(obj.get_x() + obj.get_width()));

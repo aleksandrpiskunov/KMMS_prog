@@ -23,7 +23,7 @@ namespace pav{
 		BaseObject& operator=(BaseObject&&) = delete;  
 		virtual ~BaseObject() = default;
 
-		static bool is_collision(const BaseObject &a, const BaseObject &b) {
+		bool is_collision(const BaseObject &a, const BaseObject &b) {
 			return (a.x + a.width > b.x) && (a.x < (b.x + b.width)) && ((a.y + a.height) > b.y) && (a.y < (b.y + b.height));
 		}
 
