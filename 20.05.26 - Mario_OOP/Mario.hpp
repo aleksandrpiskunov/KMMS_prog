@@ -11,7 +11,7 @@ namespace pav{
 		      const char inType)
 			: MovingItem(xPos, yPos, oWidth, oHeight, inType) {}
 		~Mario() = default;
-
+		
 		void reset(const float xPos, const float yPos,
 		           const float oWidth, const float oHeight,
 		           const char inType) {
@@ -25,6 +25,8 @@ namespace pav{
 			horizSpeed = 0.0f;
 		}
 
+		void update(Game &game);
+
 		void jump(const float speed) {
 			if (!IsFly) {
 				vertSpeed = speed;
@@ -37,16 +39,6 @@ namespace pav{
 
 		void mario_collision(Game &game);
 		void player_dead(Game &game);
-
-		void update(Game &game);
-
-		void set_pos(const float xPos, const float yPos) { x = xPos; y = yPos; }
-
-		float get_x() const { return x; }
-		float get_y() const { return y; }
-		float get_width() const { return width; }
-		float get_height() const { return height; }
-		char get_type() const { return cType; }
 	};
 
 }

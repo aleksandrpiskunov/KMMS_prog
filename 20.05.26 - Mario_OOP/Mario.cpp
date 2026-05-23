@@ -8,7 +8,7 @@
 namespace pav {
 
 namespace {
-bool is_collision(const Mario &mario, const TObject &object) {
+bool is_collision(const Mario &mario, const BaseObject &object) {
 	return (mario.get_x() + mario.get_width() > object.get_x()) &&
 		   (mario.get_x() < (object.get_x() + object.get_width())) &&
 		   ((mario.get_y() + mario.get_height()) > object.get_y()) &&
@@ -33,7 +33,7 @@ void Mario::update(Game &game) {
 
 		if ((brick.get_cType() == MYSTERY_BLOCK) && (vertSpeed < 0)) {
 			game.get_bricks()[i]->set_cType(EMPTY_BLOCK);
-			TObject *newMoving = game.create_moving(brick.get_x(), brick.get_y() - 3, 3, 2, COLLECTIBLE);
+			BaseObject *newMoving = game.create_moving(brick.get_x(), brick.get_y() - 3, 3, 2, COLLECTIBLE);
 			newMoving->set_vert_speed(ITEM_BOUNCE_SPEED);
 		}
 
