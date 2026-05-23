@@ -6,93 +6,94 @@
 #include "Mario.hpp"
 
 namespace pav{
-    class Game {
-    private:
-        std::vector<std::vector<char>> map;
-        int mapWidth, mapHeight;
-        int level = 0;
-        int score;
-        int maxLvl; 
-        int brickLength;
-        int movingLength;
+	class Game {
+	private:
+		std::vector<std::vector<char>> map;
+		int mapWidth, mapHeight;
+		int level = 0;
+		int score;
+		int maxLvl; 
+		int brickLength;
+		int movingLength;
 
-        std::unique_ptr<Mario> mario;
-        std::vector<std::unique_ptr<TObject>> brick;
-        std::vector<std::unique_ptr<TObject>> moving;
+		std::unique_ptr<Mario> mario;
+		std::vector<std::unique_ptr<TObject>> brick;
+		std::vector<std::unique_ptr<TObject>> moving;
     
-    public:
-        Game(int width = MAP_WIDTH, int height = MAP_HEIGHT);
-        ~Game();
+	public:
+		Game(int width = MAP_WIDTH, int height = MAP_HEIGHT);
+		~Game();
 
-        Game() = delete;                   
-        Game(const Game&) = delete;         
-        Game& operator=(const Game&) = delete;  
-        Game(Game&&) = delete;              
-        Game& operator=(Game&&) = delete;  
-        
-        bool is_pos_in_map(const int x, const int y) const {
-            return ( ( x >= 0) && ( x < mapWidth) && ( y>= 0) && ( y < mapHeight));
-        }
+		Game() = delete;                   
+		Game(const Game&) = delete;         
+		Game& operator=(const Game&) = delete;  
+		Game(Game&&) = delete;              
+		Game& operator=(Game&&) = delete;  
+		
+		bool is_pos_in_map(const int x, const int y) const {
+			return ( ( x >= 0) && ( x < mapWidth) && ( y>= 0) && ( y < mapHeight));
+		}
 
-        void clear_map();
+		void clear_map();
 
-        void show_map() const;
-        void put_score_on_map();
-        void create_level(int lvl);
-        void horizon_move_map(const float dx);
+		void show_map() const;
+		void put_score_on_map();
+		void create_level(int lvl);
+		void horizon_move_map(const float dx);
+		void run();
 
-        TObject* create_brick(const float x, const float y, const float w, const float h, const char type);
-        TObject* create_moving(const float x, const float y, const float w, const float h, const char type);
-        void delete_moving(std::size_t index);
+		TObject* create_brick(const float x, const float y, const float w, const float h, const char type);
+		TObject* create_moving(const float x, const float y, const float w, const float h, const char type);
+		void delete_moving(std::size_t index);
 
-        void put_object_on_map(const TObject &obj);
-        void put_object_on_map(const Mario &player);
+		void put_object_on_map(const TObject &obj);
+		void put_object_on_map(const Mario &player);
 
-        void keyboard_detect(int &moveDirection, bool &jumpRequested, bool &shouldExit);
+		void keyboard_detect(int &moveDirection, bool &jumpRequested, bool &shouldExit);
 
-        const std::vector<std::unique_ptr<TObject>>& get_bricks() const {
-            return brick;
-        }
+		const std::vector<std::unique_ptr<TObject>>& get_bricks() const {
+			return brick;
+		}
 
-        int get_brick_length() const {
-            return brickLength;
-        }
+		int get_brick_length() const {
+			return brickLength;
+		}
 
-        const std::vector<std::unique_ptr<TObject>>& get_moving() const {
-            return moving;
-        }
+		const std::vector<std::unique_ptr<TObject>>& get_moving() const {
+			return moving;
+		}
 
-        int get_moving_length() const {
-            return movingLength;
-            }
+		int get_moving_length() const {
+			return movingLength;
+		}
 
-        int get_level() const {
-            return level;
-        }
+		int get_level() const {
+			return level;
+		}
 
-        void rise_level() {
-            level++;
-        }
+		void rise_level() {
+			level++;
+		}
 
-        void reset_level(){
-            level = 1;
-        }
+		void reset_level(){
+			level = 1;
+		}
 
-        int get_score() const {
-            return score;
-        }
+		int get_score() const {
+			return score;
+		}
 
-        void set_score(const int newScore) {
-            score = newScore;
-        }
+		void set_score(const int newScore) {
+			score = newScore;
+		}
 
-        int get_maxLvl() const {
-            return maxLvl;
-        }
+		int get_maxLvl() const {
+			return maxLvl;
+		}
 
-        void set_maxLvl(const int newMaxLvl) {
-            maxLvl = newMaxLvl;
-        }
-    };
+		void set_maxLvl(const int newMaxLvl) {
+			maxLvl = newMaxLvl;
+		}
+	};
 }
 
