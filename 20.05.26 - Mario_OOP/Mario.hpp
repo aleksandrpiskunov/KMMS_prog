@@ -1,24 +1,15 @@
 #pragma once
+#include "MovingItems.hpp"
 
 namespace pav{
 	class Game;
-	class Mario {
-	private:
-		float x;
-		float y;
-		float width;
-		float height;
-		float vertSpeed;
-		bool IsFly;
-		char cType;
-		float horizSpeed;
+	class Mario : public MovingItem {
 
 	public:
 		Mario(const float xPos, const float yPos,
 		      const float oWidth, const float oHeight,
 		      const char inType)
-			: x(xPos), y(yPos), width(oWidth), height(oHeight), vertSpeed(0.0f), IsFly(false), cType(inType), horizSpeed(0.0f) {}
-
+			: MovingItem(xPos, yPos, oWidth, oHeight, inType) {}
 		~Mario() = default;
 
 		void reset(const float xPos, const float yPos,

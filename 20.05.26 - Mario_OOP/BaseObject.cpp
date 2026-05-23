@@ -1,6 +1,6 @@
 #include "Constants.hpp"
 #include "Game.hpp"
-#include "TObject.hpp"
+#include "BaseObject.hpp"
 
 #include <locale.h>   // Нужен для setlocale()
 #include <math.h>
@@ -14,10 +14,7 @@
 
 namespace pav{
 
-TObject::TObject(const float xPos, const float yPos, const float oWidth, const float oHeight, const char inType)
-	: x(xPos), y(yPos), width(oWidth), height(oHeight), vertSpeed(0.0f), IsFly(false), cType(inType), horizSpeed(0.0f){};
-
-void TObject::vert_move(Game &game){
+void BaseObject::vert_move(Game &game){
 	IsFly = true;
 	vertSpeed += GRAVITY;
 	set_pos(x, y + vertSpeed);
@@ -25,7 +22,7 @@ void TObject::vert_move(Game &game){
 	if (game.get_brick_length() == 0) return;
 
 	for (int i = 0; i < game.get_brick_length(); i++){
-		if (TObject::is_collision(*this, *game.get_bricks()[i]))
+		if (BaseObject::is_collision(*this, *game.get_bricks()[i]))
 		{
 			if ( ((*game.get_bricks()[i]).get_cType() == MYSTERY_BLOCK) && (vertSpeed < 0)){
 				(*game.get_bricks()[i]).set_cType(EMPTY_BLOCK);
@@ -59,11 +56,11 @@ void TObject::vert_move(Game &game){
 	}
 }
 
-void TObject::horiz_move(Game &game){
+void BaseObject::horiz_move(Game &game){
 	x += horizSpeed;
 
 	for (int i = 0; i < game.get_brick_length(); i++){
-		if (TObject::is_collision(*this, *game.get_bricks()[i])){
+		if (BaseObject::is_collision(*this, *game.get_bricks()[i])){
 			x -= horizSpeed;
 			horizSpeed = -horizSpeed;
 			return;

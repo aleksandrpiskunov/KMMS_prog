@@ -2,7 +2,7 @@
 
 namespace pav{
 	class Game;
-	class TObject{
+	class BaseObject{
 	protected:
 		float x;
 		float y;
@@ -14,15 +14,16 @@ namespace pav{
 		float horizSpeed;
 
 	public: 
-		TObject() = delete;
-		TObject(const float xPos, const float yPos, const float oWidth, const float oHeight, const char inType);
-		TObject(const TObject&) = delete;         
-		TObject& operator=(const TObject&) = delete;  
-		TObject(TObject&&) = delete;              
-		TObject& operator=(TObject&&) = delete;  
-		virtual ~TObject() = default;
+		BaseObject() = delete;
+		BaseObject(const float xPos, const float yPos, const float oWidth, const float oHeight, const char inType)
+			: x(xPos), y(yPos), width(oWidth), height(oHeight), vertSpeed(0.0f), IsFly(false), cType(inType), horizSpeed(0.0f){};
+		BaseObject(const BaseObject&) = delete;         
+		BaseObject& operator=(const BaseObject&) = delete;  
+		BaseObject(BaseObject&&) = delete;              
+		BaseObject& operator=(BaseObject&&) = delete;  
+		virtual ~BaseObject() = default;
 
-		static bool is_collision(const TObject &a, const TObject &b) {
+		static bool is_collision(const BaseObject &a, const BaseObject &b) {
 			return (a.x + a.width > b.x) && (a.x < (b.x + b.width)) && ((a.y + a.height) > b.y) && (a.y < (b.y + b.height));
 		}
 
@@ -36,11 +37,6 @@ namespace pav{
 		float get_height() const { return height; }
 		char get_type() const { return cType; }
 
-		void vert_move(Game &game);
-		void horiz_move(Game &game);
-
-		virtual void update(Game &game) = 0;
-
 		char get_cType() const{
 			return cType;
 		}
@@ -48,6 +44,13 @@ namespace pav{
 		void set_cType(char type){
 			cType = type;
 		}
+
+		void vert_move(Game &game);
+		void horiz_move(Game &game);
+
+		virtual void update(Game &game) = 0;
+
+
 	};
 
 }

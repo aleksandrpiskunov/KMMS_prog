@@ -2,7 +2,7 @@
 #include <vector>
 #include <memory>
 #include "Constants.hpp"
-#include "TObject.hpp"
+#include "BaseObject.hpp"
 #include "Mario.hpp"
 
 namespace pav{
@@ -10,15 +10,15 @@ namespace pav{
 	private:
 		std::vector<std::vector<char>> map;
 		int mapWidth, mapHeight;
-		int level = 0;
+		int level = 1;
 		int score;
 		int maxLvl; 
 		int brickLength;
 		int movingLength;
 
 		std::unique_ptr<Mario> mario;
-		std::vector<std::unique_ptr<TObject>> brick;
-		std::vector<std::unique_ptr<TObject>> moving;
+		std::vector<std::unique_ptr<BaseObject>> brick;
+		std::vector<std::unique_ptr<BaseObject>> moving;
     
 	public:
 		Game(int width = MAP_WIDTH, int height = MAP_HEIGHT);
@@ -42,16 +42,16 @@ namespace pav{
 		void horizon_move_map(const float dx);
 		void run();
 
-		TObject* create_brick(const float x, const float y, const float w, const float h, const char type);
-		TObject* create_moving(const float x, const float y, const float w, const float h, const char type);
+		BaseObject* create_brick(const float x, const float y, const float w, const float h, const char type);
+		BaseObject* create_moving(const float x, const float y, const float w, const float h, const char type);
 		void delete_moving(std::size_t index);
 
-		void put_object_on_map(const TObject &obj);
+		void put_object_on_map(const BaseObject &obj);
 		void put_object_on_map(const Mario &player);
 
 		void keyboard_detect(int &moveDirection, bool &jumpRequested, bool &shouldExit);
 
-		const std::vector<std::unique_ptr<TObject>>& get_bricks() const {
+		const std::vector<std::unique_ptr<BaseObject>>& get_bricks() const {
 			return brick;
 		}
 
@@ -59,7 +59,7 @@ namespace pav{
 			return brickLength;
 		}
 
-		const std::vector<std::unique_ptr<TObject>>& get_moving() const {
+		const std::vector<std::unique_ptr<BaseObject>>& get_moving() const {
 			return moving;
 		}
 

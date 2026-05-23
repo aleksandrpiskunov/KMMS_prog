@@ -1,13 +1,13 @@
 #pragma once 
-#include "TObject.hpp"
+#include "BaseObject.hpp"
 
 namespace pav{
-	class Brick : public TObject {
+	class Brick : public BaseObject {
 	public:
 		Brick(const float xPos, const float yPos, 
 		      const float oWidth, const float oHeight, 
 		      const char inType)
-			: TObject(xPos, yPos, oWidth, oHeight, inType) {}
+			: BaseObject(xPos, yPos, oWidth, oHeight, inType) {}
 
 		~Brick() override = default;
 

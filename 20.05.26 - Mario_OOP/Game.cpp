@@ -14,7 +14,6 @@
 #include "MovingItems.hpp"
 #include "Mario.hpp"
 
-
 namespace pav {
 
 Game::Game(int width, int height)
@@ -53,10 +52,6 @@ void Game::put_score_on_map() {
 }
 
 void Game::create_level(int lvl) {
-		if (lvl < 1) {
-			lvl = 1;
-		}
-
 		level = lvl;
 		score = 0;
 		maxLvl = 3;
@@ -154,13 +149,13 @@ void Game::horizon_move_map(const float dx) {
 	}
 }
 
-pav::TObject* Game::create_brick(const float x, const float y, const float w, const float h, const char type) {
+TObject* Game::create_brick(const float x, const float y, const float w, const float h, const char type) {
 	brick.emplace_back(std::make_unique<pav::Brick>(x, y, w, h, type));
 	++brickLength;
 	return brick.back().get();
 }
 
-pav::TObject* Game::create_moving(const float x, const float y, const float w, const float h, const char type) {
+TObject* Game::create_moving(const float x, const float y, const float w, const float h, const char type) {
 	moving.emplace_back(std::make_unique<pav::MovingItem>(x, y, w, h, type));
 	moving.back()->set_horiz_speed(0.2f);
 	++movingLength;
