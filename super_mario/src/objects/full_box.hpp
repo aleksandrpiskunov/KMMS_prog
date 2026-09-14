@@ -8,6 +8,7 @@ namespace biv {
 	class FullBox : public Box, public Collisionable {
 		protected:
 			UIFactory* ui_factory;
+			bool is_empty_ = false;
 
 		public:
 			FullBox(
@@ -15,6 +16,10 @@ namespace biv {
 				const int width, const int height,
 				UIFactory* ui_factory
 			);
+			
+			bool is_empty() const noexcept {
+				return is_empty_;
+			}
 			
 			Rect get_rect() const noexcept override;
 			Speed get_speed() const noexcept override;

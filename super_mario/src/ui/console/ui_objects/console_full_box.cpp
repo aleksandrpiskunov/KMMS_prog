@@ -9,9 +9,8 @@ ConsoleFullBox::ConsoleFullBox(
 ) : FullBox(top_left, width, height, ui_factory) {}
 
 char ConsoleFullBox::get_brush() const noexcept {
-	if (is_active_) {
-		return '?';
-	} else {
+	if (is_empty()) {
 		return '-';
 	}
+	return '?';
 }

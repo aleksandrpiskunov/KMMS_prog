@@ -6,7 +6,9 @@ ConsoleUIFactory::ConsoleUIFactory(Game* game) : UIFactory(game) {}
 
 void ConsoleUIFactory::clear_data() {
 	game->remove_objs();
-	game_map->remove_objs();
+	if (game_map != nullptr) {
+		game_map->remove_objs();
+	}
 	delete mario;
 	mario = nullptr;
 	boxes.clear();
@@ -44,6 +46,8 @@ void ConsoleUIFactory::create_flyable_enemy(
 	ConsoleFlyableEnemy* flyable_enemy = new ConsoleFlyableEnemy(top_left, width, height, flying_height, flying_radius);
 	flyable_enemies.push_back(flyable_enemy);
 	game->add_map_movable(flyable_enemy);
+	game->add_movable(flyable_enemy);
+	game->add_collisionable(flyable_enemy);
 	game_map->add_obj(flyable_enemy);
 }
 
@@ -64,7 +68,9 @@ void ConsoleUIFactory::create_mario(
 	game->remove_collisionable(mario);
 	game->remove_movable(mario);
 	game->remove_mario();
-	game_map->remove_obj(mario);
+	if (game_map != nullptr) {
+		game_map->remove_obj(mario);
+	}
 	delete mario;
 	mario = nullptr;
 	
@@ -72,7 +78,9 @@ void ConsoleUIFactory::create_mario(
 	game->add_collisionable(mario);
 	game->add_movable(mario);
 	game->add_mario(mario);
-	game_map->add_obj(mario);
+	if (game_map != nullptr) {
+		game_map->add_obj(mario);
+	}
 }
 
 void ConsoleUIFactory::create_money(

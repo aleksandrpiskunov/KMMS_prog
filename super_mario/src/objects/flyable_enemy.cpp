@@ -42,12 +42,14 @@ void FlyableEnemy::move_horizontally() noexcept {
 	const float next_x = top_left.x + hspeed;
 	const float distance_from_start = std::abs(next_x - start_pos_.x);
 
-	if (distance_from_start > flying_radius) {
+	if (distance_from_start >= flying_radius) {
+		const float direction = std::copysign(1.0f, hspeed);
 		hspeed = -hspeed;
-		top_left.x = start_pos_.x + std::copysign(static_cast<float>(flying_radius), hspeed);
-	} else {
-		top_left.x = next_x;
+		top_left.x = start_pos_.x + direction * static_cast<float>(flying_radius);
+		return;
 	}
+
+	top_left.x = next_x;
 }
 
 void FlyableEnemy::move_vertically() noexcept {
@@ -63,6 +65,8 @@ void FlyableEnemy::process_horizontal_static_collision(Rect* obj) noexcept {
 
 void FlyableEnemy::process_mario_collision(Collisionable* mario) noexcept {
 	if (mario->get_speed().v > 0 && mario->get_speed().v != V_ACCELERATION) {
+		vspeed = 0.15f;
+		hspeed = 0.0f;
 		kill();
 	} else {
 		mario->kill();

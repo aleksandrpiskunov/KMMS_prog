@@ -19,8 +19,8 @@ biv::Speed FullBox::get_speed() const noexcept {
 void FullBox::process_horizontal_static_collision(Rect* obj) noexcept {}
 
 void FullBox::process_mario_collision(Collisionable* mario) noexcept {
-	if (mario->get_speed().v < 0) {
-		kill();
+	if (!is_empty_ && mario->get_speed().v < 0) {
+		is_empty_ = true;
 		ui_factory->create_money({top_left.x, top_left.y - 3}, 3, 2);
 	}
 }

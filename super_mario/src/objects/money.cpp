@@ -24,6 +24,9 @@ void Money::process_horizontal_static_collision(Rect* obj) noexcept {
 }
 
 void Money::process_mario_collision(Collisionable* mario) noexcept {
+	(void)mario;
+	vspeed = 0.15f;
+	hspeed = 0.0f;
 	kill();
 }
 

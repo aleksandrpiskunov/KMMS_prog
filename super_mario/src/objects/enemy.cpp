@@ -25,6 +25,8 @@ void Enemy::process_horizontal_static_collision(Rect* obj) noexcept {
 
 void Enemy::process_mario_collision(Collisionable* mario) noexcept {
 	if (mario->get_speed().v > 0 && mario->get_speed().v != V_ACCELERATION) {
+		vspeed = 0.15f;
+		hspeed = 0.0f;
 		kill();
 	} else {
 		mario->kill();

@@ -1,5 +1,7 @@
 #include "console_game_map.hpp"
 
+#include "collisionable.hpp"
+
 #include <algorithm>
 #include <cstdio>
 #include <iostream>
@@ -58,6 +60,10 @@ void ConsoleGameMap::refresh() noexcept {
 	clear();
 	
 	for (ConsoleUIObject* obj: objs) {
+		auto collisionable = dynamic_cast<biv::Collisionable*>(obj);
+		if (collisionable != nullptr && !collisionable->is_active()) {
+			continue;
+		}
 		int left = obj->get_left();
 		int top = obj->get_top();
 		int right = obj->get_right();
