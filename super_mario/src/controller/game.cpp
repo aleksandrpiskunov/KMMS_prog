@@ -4,6 +4,7 @@
 
 #include "enemy.hpp"
 #include "flyable_enemy.hpp"
+#include "jumping_enemy.hpp"
 #include "money.hpp"
 
 using biv::Game;
