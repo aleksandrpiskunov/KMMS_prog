@@ -15,6 +15,7 @@
 
 namespace biv {
 	class Enemy : public RectMapMovableAdapter, public Movable, public Collisionable {
+
 		public:
 			Enemy(const Coord& top_left, const int width, const int height);
 

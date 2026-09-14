@@ -19,7 +19,7 @@ float Movable::get_vspeed() const noexcept {
 }
 
 void Movable::jump() noexcept {
-	if (vspeed == 0) {
+	if (vspeed == 0) { //vspeed = 0 => Object is on ship
 		vspeed = JUMP_SPEED;
 	}
 }
@@ -43,5 +43,5 @@ void Movable::move_vertically() noexcept {
 	if (vspeed < MAX_V_SPEED) {
 		vspeed += V_ACCELERATION;
 	}
-	top_left.y += vspeed;
+	top_left.y += vspeed; //On the beginnig of jumping vspeed equals -1, after it decreases
 }

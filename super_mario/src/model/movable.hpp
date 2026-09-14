@@ -5,11 +5,11 @@
 namespace biv {
 	class Movable : virtual public Rect {
 		protected:
-			static constexpr float JUMP_SPEED = -1.0f;
+			static constexpr float JUMP_SPEED = -1.0f; //f means that var float, not a double as it is by default
 			static constexpr float MAX_V_SPEED = 0.98f;
 			static constexpr float V_ACCELERATION = 0.05f;
 
-			float vspeed = 0;
+			float vspeed = 0; //vertical speed
 			float hspeed = 0;
 
 		protected:

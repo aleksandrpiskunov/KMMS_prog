@@ -25,6 +25,8 @@ namespace biv {
 				const Coord& top_left, const int width, const int height) = 0;
 			virtual void create_enemy(
 				const Coord& top_left, const int width, const int height) = 0;
+			virtual void create_flyable_enemy(
+				const Coord& top_left, const int width, const int height, const int flying_height, const int flying_radius) = 0;
 			virtual void create_full_box(
 				const Coord& top_left, const int width, const int height) = 0;
 			virtual void create_mario(

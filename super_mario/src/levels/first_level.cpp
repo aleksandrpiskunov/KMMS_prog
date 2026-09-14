@@ -46,4 +46,6 @@ void FirstLevel::init_data() {
 	ui_factory->create_enemy({80, 5}, 3, 2);
 	ui_factory->create_enemy({125, 5}, 3, 2);
 	ui_factory->create_enemy({160, 5}, 3, 2);
+
+	ui_factory->create_flyable_enemy({90, 5}, 3, 2, 3, 8);
 }

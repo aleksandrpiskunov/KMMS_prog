@@ -14,6 +14,7 @@ void ConsoleUIFactory::clear_data() {
 	ships.clear();
 	enemies.clear();
 	moneys.clear();
+	flyable_enemies.clear();
 }
 
 void ConsoleUIFactory::create_box(
@@ -35,6 +36,17 @@ void ConsoleUIFactory::create_enemy(
 	game->add_movable(enemy);
 	game->add_collisionable(enemy);
 	game_map->add_obj(enemy);
+}
+
+void ConsoleUIFactory::create_flyable_enemy(
+	const Coord& top_left, const int width, const int height, const int flying_height, const int flying_radius
+) {
+	ConsoleFlyableEnemy* flyable_enemy = new ConsoleFlyableEnemy(top_left, width, height, flying_height, flying_radius);
+	flyable_enemies.push_back(flyable_enemy);
+	game->add_map_movable(flyable_enemy);
+	game->add_movable(flyable_enemy);
+	game->add_collisionable(flyable_enemy);
+	game_map->add_obj(flyable_enemy);
 }
 
 void ConsoleUIFactory::create_full_box(
