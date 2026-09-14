@@ -13,6 +13,8 @@
 #include "Brick.hpp"
 #include "MovingItems.hpp"
 #include "Mario.hpp"
+#include "Enemy.hpp"
+#include "Money.hpp"
 
 namespace pav {
 
@@ -72,21 +74,21 @@ void Game::create_level(int lvl) {
 			case 1:
 			create_brick(15, 20, 3, 5, '+');
 			create_brick(20, 20, 40, 5, '#');
-			create_brick(30, 12, 5, 3, '?');
-			create_brick(50, 12, 5, 3, '?');
+			create_money(30, 12, 5, 3);
+			create_money(50, 12, 5, 3);
 			create_brick(60, 15, 40, 10, '#');
 			create_brick(60, 5, 10, 3, '-');
-			create_brick(70, 5, 5, 3, '?');
+			create_money(70, 5, 5, 3);
 			create_brick(75, 5, 5, 3, '-');
-			create_brick(80, 5, 5, 3, '?');
+			create_money(80, 5, 5, 3);
 			create_brick(85, 10, 10, 3, '-');
 			create_brick(100, 20, 20, 5, '#');
 			create_brick(120, 15, 20, 10, '#');
 			create_brick(150, 20, 40, 5, '#');
 			create_brick(200, 15, 10, 10, '+');
 
-			create_moving(25, 10, 3, 2, 'o');
-			create_moving(80, 10, 3, 2, 'o');
+			create_enemy(25, 10, 3, 2);
+			create_enemy(80, 10, 3, 2);
 			break;
 		case 2:
 			create_brick(15, 20, 3, 5, '+');
@@ -97,11 +99,11 @@ void Game::create_level(int lvl) {
 			create_brick(120, 20, 40, 5, '#');
 			create_brick(165, 15, 10, 10, '+');
 
-			create_moving(25, 10, 3, 2, 'o');
-			create_moving(80, 10, 3, 2, 'o');
-			create_moving(65, 10, 3, 2, 'o');
-			create_moving(120, 10, 3, 2, 'o');
-			create_moving(175, 10, 3, 2, 'o');
+			create_enemy(25, 10, 3, 2);
+			create_enemy(80, 10, 3, 2);
+			create_enemy(65, 10, 3, 2);
+			create_enemy(120, 10, 3, 2);
+			create_enemy(175, 10, 3, 2);
 			break;
 		case 3:
 			create_brick(5, 20, 3, 5, '+');
@@ -112,11 +114,11 @@ void Game::create_level(int lvl) {
 			create_brick(135, 15, 14, 2, '#');
 			create_brick(152, 12, 10, 2, '+');
 
-			create_moving(18, 10, 3, 2, 'o');
-			create_moving(72, 10, 3, 2, 'o');
-			create_moving(98, 7, 3, 2, 'o');
-			create_moving(128, 8, 3, 2, 'o');
-			create_moving(156, 10, 3, 2, 'o');
+			create_enemy(18, 10, 3, 2);
+			create_enemy(72, 10, 3, 2);
+			create_enemy(98, 7, 3, 2);
+			create_enemy(128, 8, 3, 2);
+			create_enemy(156, 10, 3, 2);
 			break;
 		default:
 			break;
@@ -162,10 +164,39 @@ BaseObject* Game::create_moving(const float x, const float y, const float w, con
 	return moving.back().get();
 }
 
+BaseObject* Game::create_enemy(const float x, const float y, const float w, const float h){
+	enemy.emplace_back(std::make_unique<pav::Enemy>(x, y, w, h));
+	enemy.back()->set_horiz_speed(0.2f);
+	++enemyLength;
+	return enemy.back().get();
+}
+
+BaseObject* Game::create_money(const float x, const float y, const float w, const float h){
+	money.emplace_back(std::make_unique<pav::Money>(x, y, w, h));
+	money.back()->set_horiz_speed(0.2f);
+	++moneyLength;
+	return money.back().get();
+}
+
+
 void Game::delete_moving(std::size_t index) {
 	if (index < moving.size()) {
 		moving.erase(moving.begin() + index);
 		movingLength = static_cast<int>(moving.size());
+	}
+}
+
+void Game::delete_enemy(std::size_t index) {
+	if (index < enemy.size()) {
+		enemy.erase(enemy.begin() + index);
+		enemyLength = static_cast<int>(enemy.size());
+	}
+}
+
+void Game::delete_money(std::size_t index) {
+	if (index < money.size()) {
+		money.erase(enemy.begin() + index);
+		moneyLength = static_cast<int>(enemy.size());
 	}
 }
 
@@ -233,14 +264,6 @@ void Game::keyboard_detect(int &moveDirection, bool &jumpRequested, bool &should
 }
 
 void Game::run() {
-	const int COLOR_NORMAL = 1;
-	const int COLOR_DEAD = 2;
-	const int COLOR_COMPLETE = 3;
-	const float HORIZONTAL_SPEED = 0.3f;
-	const float JUMP_SPEED = -1.1f;
-	const int FRAME_DELAY_US = 10000;
-	const int MOVE_STOP = 0;
-
 	setlocale(LC_ALL, "");
 
 	initscr();
@@ -261,7 +284,7 @@ void Game::run() {
 
 	create_level(1);
 
-	int moveDirection = MOVE_STOP;
+	int moveDirection = 0;
 	bool jumpRequested = false;
 
 	do {
@@ -282,7 +305,7 @@ void Game::run() {
 
 		jumpRequested = false;
 
-		if (moveDirection != MOVE_STOP) {
+		if (moveDirection != 0) {
 			horizon_move_map(static_cast<float>(moveDirection) * HORIZONTAL_SPEED);
 		}
 
@@ -296,6 +319,16 @@ void Game::run() {
 			put_object_on_map(*brick[i]);
 		}
 
+		for (int i = 0; i < enemyLength; ++i) {
+			enemy[i]->update(*this);
+			if (enemy[i]->get_y() > mapHeight) {
+				delete_enemy(i);
+				--i;
+				continue;
+			}
+			put_object_on_map(*enemy[i]);
+		}
+
 		for (int i = 0; i < movingLength; ++i) {
 			moving[i]->update(*this);
 			if (moving[i]->get_y() > mapHeight) {
@@ -306,11 +339,21 @@ void Game::run() {
 			put_object_on_map(*moving[i]);
 		}
 
+		for (int i = 0; i < moneyLength; ++i) {
+			money[i]->update(*this);
+			if (money[i]->get_y() > mapHeight) {
+				delete_money(i);
+				--i;
+				continue;
+			}
+			put_object_on_map(*money[i]);
+		}
+
 		put_object_on_map(*mario);
 		put_score_on_map();
 		show_map();
 
-		usleep(FRAME_DELAY_US);
+		usleep(10000);
 	} while (true);
 
 	endwin();

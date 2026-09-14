@@ -60,12 +60,6 @@ void Mario::update(Game &game) {
 }
 
 void Mario::mario_collision(Game &game) {
-	constexpr char ENEMY = 'o';
-	constexpr char COLLECTIBLE = '$';
-	constexpr int ENEMY_KILL_POINTS = 50;
-	constexpr int COLLECTIBLE_POINTS = 100;
-	constexpr float TOP_COLLISION_THRESHOLD = 0.5f;
-
 	for (int i = 0; i < game.get_moving_length(); ++i) {
 		const auto &moving = *game.get_moving()[i];
 		if (!is_collision(*this, moving)) {

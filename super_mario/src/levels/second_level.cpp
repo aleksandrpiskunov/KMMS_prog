@@ -25,5 +25,5 @@ void SecondLevel::init_data() {
 	ui_factory->create_ship({80, 25}, 20, 2);
 	ui_factory->create_ship({120, 20}, 10, 7);
 	ui_factory->create_ship({150, 25}, 40, 2);
-	ui_factory->create_ship({210, 20}, 10, 7);
+	ui_factory->create_final_ship({210, 20}, 10, 7);
 }

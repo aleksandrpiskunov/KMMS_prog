@@ -15,10 +15,14 @@ namespace pav{
 		int maxLvl; 
 		int brickLength;
 		int movingLength;
+		int enemyLength; 
+		int moneyLength;
 
 		std::unique_ptr<Mario> mario;
 		std::vector<std::unique_ptr<BaseObject>> brick;
 		std::vector<std::unique_ptr<BaseObject>> moving;
+		std::vector<std::unique_ptr<BaseObject>> enemy;
+		std::vector<std::unique_ptr<BaseObject>> money;
     
 	public:
 		Game(int width = MAP_WIDTH, int height = MAP_HEIGHT);
@@ -44,7 +48,11 @@ namespace pav{
 
 		BaseObject* create_brick(const float x, const float y, const float w, const float h, const char type);
 		BaseObject* create_moving(const float x, const float y, const float w, const float h, const char type);
+		BaseObject* create_enemy(const float x, const float y, const float w, const float h);
+		BaseObject* create_money(const float x, const float y, const float w, const float h);
 		void delete_moving(std::size_t index);
+		void delete_enemy(std::size_t index);
+		void delete_money(std::size_t index);
 
 		void put_object_on_map(const BaseObject &obj);
 		void put_object_on_map(const Mario &player);

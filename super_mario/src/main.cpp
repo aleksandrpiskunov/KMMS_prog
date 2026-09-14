@@ -110,6 +110,7 @@ int main() {
 			game_map->is_below_map(mario->get_top())
 			|| !mario->is_active()
 		) {
+			game.reset_stats();
 			keyboard->off();
 			keyboard->on();
 			game_level->restart();

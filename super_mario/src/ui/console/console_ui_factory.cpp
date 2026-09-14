@@ -6,9 +6,7 @@ ConsoleUIFactory::ConsoleUIFactory(Game* game) : UIFactory(game) {}
 
 void ConsoleUIFactory::clear_data() {
 	game->remove_objs();
-	if (game_map != nullptr) {
-		game_map->remove_objs();
-	}
+	game_map->remove_objs();
 	delete mario;
 	mario = nullptr;
 	boxes.clear();
@@ -68,9 +66,7 @@ void ConsoleUIFactory::create_mario(
 	game->remove_collisionable(mario);
 	game->remove_movable(mario);
 	game->remove_mario();
-	if (game_map != nullptr) {
-		game_map->remove_obj(mario);
-	}
+	game_map->remove_obj(mario);
 	delete mario;
 	mario = nullptr;
 	
@@ -78,9 +74,7 @@ void ConsoleUIFactory::create_mario(
 	game->add_collisionable(mario);
 	game->add_movable(mario);
 	game->add_mario(mario);
-	if (game_map != nullptr) {
-		game_map->add_obj(mario);
-	}
+	game_map->add_obj(mario);
 }
 
 void ConsoleUIFactory::create_money(
@@ -104,9 +98,20 @@ void ConsoleUIFactory::create_ship(
 	game_map->add_obj(ship);
 }
 
+void ConsoleUIFactory::create_final_ship(
+	const Coord& top_left, const int width, const int height
+) {
+	ConsoleShip* ship = new ConsoleShip(top_left, width, height);
+	ship->set_final(true);
+	ships.push_back(ship);
+	game->add_map_movable(ship);
+	game->add_static_obj(ship);
+	game_map->add_obj(ship);
+}
+
 biv::GameMap* ConsoleUIFactory::get_game_map(const int height, const int width) {
 	if (game_map == nullptr) {
-		game_map = new ConsoleGameMap(height, width);
+		game_map = new ConsoleGameMap(height, width, game);
 	}
 	return game_map;
 }

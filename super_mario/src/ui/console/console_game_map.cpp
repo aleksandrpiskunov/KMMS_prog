@@ -12,8 +12,8 @@
 
 using biv::ConsoleGameMap;
 
-ConsoleGameMap::ConsoleGameMap(const int height, const int width) 
-	: GameMap(height, width) {
+ConsoleGameMap::ConsoleGameMap(const int height, const int width, Game* game)
+	: GameMap(height, width), game(game) {
 
 	map = new char*[height];
 	for (int i = 0; i < height; i++) {
@@ -58,6 +58,9 @@ void ConsoleGameMap::clear() noexcept {
 
 void ConsoleGameMap::refresh() noexcept {
 	clear();
+	if (game != nullptr) {
+		std::snprintf(map[0], width + 1, "COINS:%d ENEMIES:%d", game->get_coins_collected(), game->get_enemies_killed());
+	}
 	
 	for (ConsoleUIObject* obj: objs) {
 		auto collisionable = dynamic_cast<biv::Collisionable*>(obj);

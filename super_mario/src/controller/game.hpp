@@ -24,7 +24,9 @@ namespace biv {
 			
 			bool is_finished_ = false;
 			bool is_level_end_ = false;
-			
+			int coins_collected_ = 0;
+			int enemies_killed_ = 0;
+		
 		public:
 			Game();
 			
@@ -43,6 +45,11 @@ namespace biv {
 			
 			bool is_finished() const noexcept;
 			bool is_level_end() const noexcept;
+			int get_coins_collected() const noexcept;
+			int get_enemies_killed() const noexcept;
+			void add_coin() noexcept;
+			void add_enemy_kill() noexcept;
+			void reset_stats() noexcept;
 			
 			void move_map_left() noexcept;
 			void move_map_right() noexcept;

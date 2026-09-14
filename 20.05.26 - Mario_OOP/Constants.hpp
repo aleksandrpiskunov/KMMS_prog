@@ -6,13 +6,22 @@ namespace pav {
 
 	inline constexpr float GRAVITY = 0.06f;
 	inline constexpr float ITEM_BOUNCE_SPEED = -0.7f;
+
+	inline constexpr int COLOR_NORMAL = 1;
 	inline constexpr int COLOR_DEAD = 2;
 	inline constexpr int COLOR_COMPLETE = 3;
-	inline constexpr int COLOR_NORMAL = 1;
 	inline constexpr char MYSTERY_BLOCK = '?';
 	inline constexpr char EMPTY_BLOCK = '-';
 	inline constexpr char EXIT_BLOCK = '+';
 	inline constexpr char PLAYER = '@';
 	inline constexpr char COLLECTIBLE = '$';
 	inline constexpr char ENEMY = 'o';
+	const float HORIZONTAL_SPEED = 0.3f;
+	const float JUMP_SPEED = -1.1f;
+
+	constexpr int ENEMY_KILL_POINTS = 50;
+	constexpr int COLLECTIBLE_POINTS = 100;
+	constexpr float TOP_COLLISION_THRESHOLD = 0.5f;
+	
+
 }

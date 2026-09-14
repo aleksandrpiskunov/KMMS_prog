@@ -2,6 +2,10 @@
 
 #include <algorithm>
 
+#include "enemy.hpp"
+#include "flyable_enemy.hpp"
+#include "money.hpp"
+
 using biv::Game;
 
 Game::Game() {}
@@ -48,6 +52,16 @@ void Game::check_mario_collision() {
 		}
 		if (obj->has_collision(mario)) {
 			obj->process_mario_collision(mario);
+			if (!obj->is_active()) {
+				if (dynamic_cast<Money*>(obj) != nullptr) {
+					add_coin();
+				} else if (
+					dynamic_cast<Enemy*>(obj) != nullptr ||
+					dynamic_cast<FlyableEnemy*>(obj) != nullptr
+				) {
+					add_enemy_kill();
+				}
+			}
 			if (!mario->is_active()) {
 				break;
 			}
@@ -92,6 +106,27 @@ bool Game::is_finished() const noexcept {
 
 bool Game::is_level_end() const noexcept {
 	return is_level_end_;
+}
+
+int Game::get_coins_collected() const noexcept {
+	return coins_collected_;
+}
+
+int Game::get_enemies_killed() const noexcept {
+	return enemies_killed_;
+}
+
+void Game::add_coin() noexcept {
+	coins_collected_++;
+}
+
+void Game::add_enemy_kill() noexcept {
+	enemies_killed_++;
+}
+
+void Game::reset_stats() noexcept {
+	coins_collected_ = 0;
+	enemies_killed_ = 0;
 }
 
 void Game::move_map_left() noexcept {

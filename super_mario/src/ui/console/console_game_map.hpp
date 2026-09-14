@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "game.hpp"
 #include "game_map.hpp"
 #include "console_ui_obj.hpp"
 
@@ -9,11 +10,11 @@ namespace biv {
 	class ConsoleGameMap : public GameMap {
 		private:
 			char** map;
-			
+			Game* game = nullptr;
 			std::vector<ConsoleUIObject*> objs;
-			
+		
 		public:
-			ConsoleGameMap(const int height, const int width);
+			ConsoleGameMap(const int height, const int width, Game* game);
 			~ConsoleGameMap();
 			
 			void add_obj(ConsoleUIObject*);
