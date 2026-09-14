@@ -21,6 +21,14 @@ biv::Speed JumpingEnemy::get_speed() const noexcept {
 	return {vspeed, hspeed};
 }
 
+void JumpingEnemy::move_map_left() noexcept {
+	top_left.x -= MapMovable::MAP_STEP;
+}
+
+void JumpingEnemy::move_map_right() noexcept {
+	top_left.x += MapMovable::MAP_STEP;
+}
+
 void JumpingEnemy::move_horizontally() noexcept {
 	// Enemy stands in place horizontally, but still moves with the map as usual.
 }
