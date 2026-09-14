@@ -28,6 +28,16 @@ biv::Speed FlyableEnemy::get_speed() const noexcept {
 	return {vspeed, hspeed};
 }
 
+void FlyableEnemy::move_map_left() noexcept {
+	top_left.x -= MapMovable::MAP_STEP;
+	start_pos_.x -= MapMovable::MAP_STEP;
+}
+
+void FlyableEnemy::move_map_right() noexcept {
+	top_left.x += MapMovable::MAP_STEP;
+	start_pos_.x += MapMovable::MAP_STEP;
+}
+
 void FlyableEnemy::move_horizontally() noexcept {
 	const float next_x = top_left.x + hspeed;
 	const float distance_from_start = std::abs(next_x - start_pos_.x);

@@ -44,8 +44,6 @@ void ConsoleUIFactory::create_flyable_enemy(
 	ConsoleFlyableEnemy* flyable_enemy = new ConsoleFlyableEnemy(top_left, width, height, flying_height, flying_radius);
 	flyable_enemies.push_back(flyable_enemy);
 	game->add_map_movable(flyable_enemy);
-	game->add_movable(flyable_enemy);
-	game->add_collisionable(flyable_enemy);
 	game_map->add_obj(flyable_enemy);
 }
 

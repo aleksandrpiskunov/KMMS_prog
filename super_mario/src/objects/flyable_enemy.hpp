@@ -32,6 +32,8 @@ namespace biv {
 				return flying_radius;
 			}
 
+			void move_map_left() noexcept override;
+			void move_map_right() noexcept override;
 			void move_horizontally() noexcept override;
 			void move_vertically() noexcept override;
 			void process_horizontal_static_collision(Rect*) noexcept override;
