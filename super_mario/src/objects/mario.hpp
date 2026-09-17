@@ -8,6 +8,8 @@
 namespace biv {
 	class Mario : public Movable, public Collisionable {
 		public:
+			using Movable::move_horizontal_offset;
+
 			Mario(const Coord& top_left, const int width, const int height);
 
 			Rect get_rect() const noexcept override;

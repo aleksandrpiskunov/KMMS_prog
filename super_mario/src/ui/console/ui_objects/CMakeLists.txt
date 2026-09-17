@@ -7,6 +7,7 @@ target_sources(${PROJECT_NAME}
 		console_full_box.cpp
 		console_mario.cpp
 		console_money.cpp
+		console_moving_platform.cpp
 		console_ship.cpp
 )
 

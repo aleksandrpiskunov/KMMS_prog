@@ -36,7 +36,11 @@ void Game::check_horizontally_static_collisions() noexcept {
 		if (!obj->is_active()) {
 			continue;
 		}
+		Rect* obj_rect = dynamic_cast<Rect*>(obj);
 		for (Rect* static_obj: static_objs) {
+			if (obj_rect == static_obj) {
+				continue;
+			}
 			if (obj->has_collision(static_obj)) {
 				obj->process_horizontal_static_collision(static_obj);
 				break;
@@ -71,7 +75,11 @@ void Game::check_mario_collision() {
 }
 
 bool Game::check_static_collisions(Collisionable* obj) const noexcept {
+	Rect* obj_rect = dynamic_cast<Rect*>(obj);
 	for (Rect* static_obj: static_objs) {
+		if (obj_rect == static_obj) {
+			continue;
+		}
 		if (obj->has_collision(static_obj)) {
 			return true;
 		}
@@ -88,7 +96,11 @@ void Game::check_vertically_static_collisions() noexcept {
 		if (!obj->is_active()) {
 			continue;
 		}
+		Rect* obj_rect = dynamic_cast<Rect*>(obj);
 		for (Rect* static_obj: static_objs) {
+			if (obj_rect == static_obj) {
+				continue;
+			}
 			if (obj->has_collision(static_obj)) {
 				obj->process_vertical_static_collision(static_obj);
 				break;

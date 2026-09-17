@@ -4,6 +4,7 @@ target_sources(${PROJECT_NAME}
 		enemy.cpp
 		flyable_enemy.cpp
 		jumping_enemy.cpp
+		moving_platform.cpp
 		mario.cpp
 		money.cpp
 )

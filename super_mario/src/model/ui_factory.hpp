@@ -35,6 +35,9 @@ namespace biv {
 				const Coord& top_left, const int width, const int height) = 0;
 			virtual void create_money(
 				const Coord& top_left, const int width, const int height) = 0;
+			virtual void create_moving_platform(
+				const Coord& top_left, const int width, const int height, const int travel_radius
+			) = 0;
 			virtual void create_ship(
 				const Coord& top_left, const int width, const int height) = 0;
 			virtual void create_final_ship(
