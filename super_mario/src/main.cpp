@@ -45,6 +45,7 @@
 int main() {
 	// 1. Установка параметров игры
 	using namespace std::chrono_literals;
+	using clock_type = std::chrono::steady_clock;
 	
 	const int map_height = 30;
 	const int map_weight = 200;
@@ -70,6 +71,17 @@ int main() {
 	biv::GameMap* game_map = ui_factory->get_game_map(map_height, map_weight);
 	biv::GameLevel* game_level = new biv::FirstLevel(ui_factory);
 	biv::Mario* mario = ui_factory->get_mario();
+	auto flash_screen = [&](biv::ScreenColor color, const std::chrono::milliseconds duration) {
+		game.set_screen_color(color);
+		const auto start = clock_type::now();
+		while (clock_type::now() - start < duration) {
+			game_map->refresh();
+			control_settings->set_cursor_start_position();
+			game_map->show();
+			std::this_thread::sleep_for(frame_delay);
+		}
+		game.set_screen_color(biv::ScreenColor::BLUE);
+	};
 	
 	biv::UserInput user_input;
 	do {
@@ -110,19 +122,19 @@ int main() {
 			game_map->is_below_map(mario->get_top())
 			|| !mario->is_active()
 		) {
+			flash_screen(biv::ScreenColor::RED, 1000ms);
 			game.reset_stats();
 			keyboard->off();
 			keyboard->on();
 			game_level->restart();
 			mario = ui_factory->get_mario();
-			std::this_thread::sleep_for(1000ms);
 		}
 		
 		if (game.is_level_end()) {
 			if (!game_level->is_final()) {
+				flash_screen(biv::ScreenColor::GREEN, 1000ms);
 				game_level = game_level->get_next();
 				mario = ui_factory->get_mario();
-				std::this_thread::sleep_for(1000ms);
 				keyboard->off();
 				keyboard->on();
 				game.start_level();

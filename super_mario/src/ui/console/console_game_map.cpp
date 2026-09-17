@@ -98,11 +98,27 @@ void ConsoleGameMap::show() const noexcept {
 			std::cout << map[i];
 		}
 	#elif defined(LINUX_CONSOLE)
+		int color_pair = 1;
+		if (game != nullptr) {
+			switch (game->get_screen_color()) {
+				case biv::ScreenColor::BLUE:
+					color_pair = 1;
+					break;
+				case biv::ScreenColor::RED:
+					color_pair = 2;
+					break;
+				case biv::ScreenColor::GREEN:
+					color_pair = 3;
+					break;
+			}
+		}
+		attrset(COLOR_PAIR(color_pair));
 		for (int i = 0; i < height; i++) {
 			//printw("%s", map[i]);
 			move(i, 0); 
 			addstr(map[i]);
 		}
+		attrset(A_NORMAL);
 		::refresh();
 	#endif
 }

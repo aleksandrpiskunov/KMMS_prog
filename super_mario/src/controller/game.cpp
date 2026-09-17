@@ -142,6 +142,14 @@ void Game::reset_stats() noexcept {
 	enemies_killed_ = 0;
 }
 
+void Game::set_screen_color(ScreenColor color) noexcept {
+	screen_color_ = color;
+}
+
+biv::ScreenColor Game::get_screen_color() const noexcept {
+	return screen_color_;
+}
+
 void Game::move_map_left() noexcept {
 	for (MapMovable* obj: map_movable_objs) {
 		obj->move_map_left();

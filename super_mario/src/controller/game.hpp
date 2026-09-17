@@ -13,6 +13,12 @@
 #include "rect.hpp"
 
 namespace biv {
+	enum class ScreenColor {
+		BLUE,
+		RED,
+		GREEN,
+	};
+
 	class Game {
 		private:
 			std::vector<MapMovable*> map_movable_objs;
@@ -26,6 +32,7 @@ namespace biv {
 			bool is_level_end_ = false;
 			int coins_collected_ = 0;
 			int enemies_killed_ = 0;
+			ScreenColor screen_color_ = ScreenColor::BLUE;
 		
 		public:
 			Game();
@@ -50,6 +57,8 @@ namespace biv {
 			void add_coin() noexcept;
 			void add_enemy_kill() noexcept;
 			void reset_stats() noexcept;
+			void set_screen_color(ScreenColor color) noexcept;
+			ScreenColor get_screen_color() const noexcept;
 			
 			void move_map_left() noexcept;
 			void move_map_right() noexcept;

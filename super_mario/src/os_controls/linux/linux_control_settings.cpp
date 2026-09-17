@@ -22,6 +22,10 @@ void LinuxControlSettings::init() {
     nodelay(stdscr, TRUE);	
 	
 	curs_set(0);
+	start_color();
+	init_pair(1, COLOR_WHITE, COLOR_BLUE);
+	init_pair(2, COLOR_WHITE, COLOR_RED);
+	init_pair(3, COLOR_WHITE, COLOR_GREEN);
 	getmaxyx(stdscr, height, width);
 }
 
