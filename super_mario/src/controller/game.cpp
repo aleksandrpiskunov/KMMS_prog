@@ -6,6 +6,7 @@
 #include "flyable_enemy.hpp"
 #include "jumping_enemy.hpp"
 #include "money.hpp"
+#include "moving_platform.hpp"
 
 using biv::Game;
 
@@ -69,6 +70,29 @@ void Game::check_mario_collision() {
 			}
 			if (!mario->is_active()) {
 				break;
+			}
+		}
+	}
+}
+void Game::check_mov_platfrom_collision(){
+	// Check collisions between moving platforms and all other objects
+	for (Collisionable* obj : collisionable_objs) {
+		if (!obj->is_active()) {
+			continue;
+		}
+
+		if (dynamic_cast<MovingPlatform*>(obj) == nullptr || obj->get_speed().h == 0) {
+			continue;
+		}
+
+		for (Collisionable* other : collisionable_objs) {
+			if (!other->is_active() || other == obj) {
+				continue;
+			}
+
+			Rect* other_rect = dynamic_cast<Rect*>(other);
+			if (other_rect && obj->has_collision(other_rect)) {
+				obj->process_mario_collision(other);
 			}
 		}
 	}

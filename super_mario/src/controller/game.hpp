@@ -47,6 +47,7 @@ namespace biv {
 			void check_mario_collision();
 			bool check_static_collisions(Collisionable* obj) const noexcept;
 			void check_vertically_static_collisions() noexcept;
+			void check_mov_platfrom_collision();
 			
 			void finish() noexcept;
 			

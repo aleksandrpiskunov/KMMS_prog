@@ -1,0 +1,121 @@
+Last login: Mon Sep 21 17:09:42 on ttys000
+(base) aleksandrpiskunov@MacBook-Air-Aleksandr-5 ~ % cd Algorithms 
+(base) aleksandrpiskunov@MacBook-Air-Aleksandr-5 Algorithms % ls                   
+Algorithms-3sem			spbu-advanced-python		spbu-fundamentals-of-algorithms	Train
+(base) aleksandrpiskunov@MacBook-Air-Aleksandr-5 Algorithms % cd Algorithms-3sem 
+(base) aleksandrpiskunov@MacBook-Air-Aleksandr-5 Algorithms-3sem % git init 
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint:
+hint: 	git config --global init.defaultBranch <name>
+hint:
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint:
+hint: 	git branch -m <name>
+hint:
+hint: Disable this message with "git config set advice.defaultBranchName false"
+Инициализирован пустой репозиторий Git в /Users/aleksandrpiskunov/Algorithms/Algorithms-3sem/.git/
+(base) aleksandrpiskunov@MacBook-Air-Aleksandr-5 Algorithms-3sem % git add . 
+(base) aleksandrpiskunov@MacBook-Air-Aleksandr-5 Algorithms-3sem % git commit -m "Creating generators, data" 
+[master (корневой коммит) 93c9c45] Creating generators, data
+ Committer: Александр Пискунов <aleksandrpiskunov@MacBook-Air-Aleksandr-5.local>
+Ваше имя или электронная почта настроены автоматически на основании вашего
+имени пользователя и имени машины. Пожалуйста, проверьте, что они 
+определены правильно.
+Вы можете отключить это уведомление установив их напрямую. Запустите следующую
+команду и следуйте инструкциям вашего текстового редактора, для
+редактирования вашего файла конфигурации:
+
+    git config --global --edit
+
+После этого, изменить авторство этой коммита можно будет с помощью команды:
+
+    git commit --amend --reset-author
+
+ 15 files changed, 921 insertions(+)
+ create mode 100644 .DS_Store
+ create mode 100644 SyntheticDataCreating/config.py
+ create mode 100644 SyntheticDataCreating/core/dataset_builder.py
+ create mode 100644 SyntheticDataCreating/data/banks.py
+ create mode 100644 SyntheticDataCreating/data/categories_brands.py
+ create mode 100644 SyntheticDataCreating/data/price_data.py
+ create mode 100644 SyntheticDataCreating/data/stores.py
+ create mode 100644 SyntheticDataCreating/export/writer.py
+ create mode 100644 SyntheticDataCreating/generators/card_generator.py
+ create mode 100644 SyntheticDataCreating/generators/category_brand_generator.py
+ create mode 100644 SyntheticDataCreating/generators/price_generator.py
+ create mode 100644 SyntheticDataCreating/generators/quantity_generator.py
+ create mode 100644 SyntheticDataCreating/generators/receipt_generator.py
+ create mode 100644 SyntheticDataCreating/generators/store_generator.py
+ create mode 100644 SyntheticDataCreating/main.py
+(base) aleksandrpiskunov@MacBook-Air-Aleksandr-5 Algorithms-3sem % git push 
+fatal: Не настроена точка назначения для отправки.
+Либо укажите URL с помощью командной строки, либо настройте внешний репозиторий с помощью
+
+    git remote add <имя> <адрес>
+
+а затем отправьте изменения с помощью имени внешнего репозитория
+
+    git push <имя>
+
+(base) aleksandrpiskunov@MacBook-Air-Aleksandr-5 Algorithms-3sem % git remote add origin https://github.com/aleksandrpiskunov/Algorithms-3sem
+(base) aleksandrpiskunov@MacBook-Air-Aleksandr-5 Algorithms-3sem % nano .gitignore 
+
+  UW PICO 5.09                                                                                   File: .gitignore                                                                                    Modified  
+
+# macOS
+.DS_Store
+._*
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.venv/
+env/
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# Jupyter
+*.ipynb_checkpoints/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+^G Get Help                       ^O WriteOut                       ^R Read File                      ^Y Prev Pg                        ^K Cut Text                       ^C Cur Pos                        
+^X Exit                           ^J Justify                        ^W Where is                       ^V Next Pg                        ^U UnCut Text                     ^T To Spell                       

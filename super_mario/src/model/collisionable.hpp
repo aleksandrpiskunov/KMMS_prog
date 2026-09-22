@@ -19,5 +19,6 @@ namespace biv {
 			virtual void process_horizontal_static_collision(Rect*) noexcept = 0;
 			virtual void process_mario_collision(Collisionable*) noexcept = 0;
 			virtual void process_vertical_static_collision(Rect*) noexcept = 0;
+			virtual void process_platform_collision(Collisionable* platform) noexcept = 0;
 	};
 }

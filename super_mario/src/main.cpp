@@ -113,9 +113,10 @@ int main() {
 		// 3. Обновление внутреннего состояния игры
 		game.move_objs_horizontally();
 		game.check_horizontally_static_collisions();
-		
+
 		game.move_objs_vertically();
 		game.check_mario_collision();
+		game.check_mov_platfrom_collision();
 		game.check_vertically_static_collisions();
 		
 		if (

@@ -1,7 +1,6 @@
 #include "moving_platform.hpp"
 
 #include "map_movable.hpp"
-#include "mario.hpp"
 
 #include <cmath>
 
@@ -62,22 +61,12 @@ void MovingPlatform::process_horizontal_static_collision(Rect* obj) noexcept {
 }
 
 void MovingPlatform::process_mario_collision(Collisionable* mario) noexcept {
-	if (mario == nullptr) {
-		return;
-	}
+	mario->process_platform_collision(this);
+}
 
-	if (mario->get_speed().v < 0) {
-		return;
-	}
-
-	const Rect mario_rect = mario->get_rect();
-	if (mario_rect.get_bottom() < get_top() - 1 || mario_rect.get_bottom() > get_top() + 1) {
-		return;
-	}
-
-	if (Mario* mario_obj = dynamic_cast<Mario*>(mario); mario_obj != nullptr) {
-		mario_obj->move_horizontal_offset(hspeed);
-	}
+void MovingPlatform::process_platform_collision(Collisionable* platform) noexcept {
+	// Platforms don't interact with other platforms
+	(void)platform;
 }
 
 void MovingPlatform::process_vertical_static_collision(Rect* obj) noexcept {

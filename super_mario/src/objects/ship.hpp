@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 
 #include "rect_map_movable_adapter.hpp"
 

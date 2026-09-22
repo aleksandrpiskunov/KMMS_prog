@@ -40,3 +40,20 @@ void Mario::process_vertical_static_collision(Rect* obj) noexcept {
 	}
 	vspeed = 0;
 }
+
+void Mario::process_platform_collision(Collisionable* platform) noexcept {
+	if (platform == nullptr) {
+		return;
+	}
+
+	if (get_speed().v < 0) {
+		return;
+	}
+
+	const Rect platform_rect = platform->get_rect();
+	if (get_rect().get_bottom() < platform_rect.get_top() - 1 || get_rect().get_bottom() > platform_rect.get_top() + 1) {
+		return;
+	}
+
+	move_horizontal_offset(platform->get_speed().h);
+}
