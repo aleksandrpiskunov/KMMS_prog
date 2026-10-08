@@ -34,9 +34,6 @@ void Enemy::process_mario_collision(Collisionable* mario) noexcept {
 }
 
 void Enemy::process_vertical_static_collision(Rect* obj) noexcept {
-	// Проверка: не свалился ли враг с корабля.
-	// Т.е., если он на краю, то он должен разверуться
-	// и побежать в обратную сторону.
 	top_left.x += hspeed;
 	if (!has_collision(obj)) {
 		process_horizontal_static_collision(obj);
@@ -44,7 +41,6 @@ void Enemy::process_vertical_static_collision(Rect* obj) noexcept {
 		top_left.x -= hspeed;
 	}
 
-	// Особенность модели вертикального передвижения в игре.
 	if (vspeed > 0) {
 		top_left.y -= vspeed;
 		vspeed = 0;
