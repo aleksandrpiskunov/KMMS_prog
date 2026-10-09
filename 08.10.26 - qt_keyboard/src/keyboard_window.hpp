@@ -17,7 +17,7 @@ namespace biv {
 			// Виджет виртуальной клавиатуры подсвечивает обработанную клавишу.
 			KeyBoard* keyboard;
 
-		slots:
+		private slots:
 			// Слоты принимают сигналы мыши и физической клавиатуры через один интерфейс.
 			void append_text(const QString& text);
 			void remove_last_character();

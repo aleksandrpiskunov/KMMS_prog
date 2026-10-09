@@ -12,6 +12,8 @@ KeyBoardWindow::KeyBoardWindow(QWidget* parent) : QWidget(parent) {
 	const int keyboard_width = 1160;
 	resize(keyboard_width, 710);
     setWindowTitle("Грустная Клавиатура");
+	// Главное окно принимает физические клавиши после кликов по виртуальной клавиатуре.
+	setFocusPolicy(Qt::StrongFocus);
 	
 	// Верхняя часть окна показывает изображение, связанное с оформлением проекта.
 	QPixmap pixmap("img/grustnii-smail.png");
@@ -28,6 +30,7 @@ KeyBoardWindow::KeyBoardWindow(QWidget* parent) : QWidget(parent) {
 	display->setMinimumHeight(80);
 	display->setFont(QFont("Roboto", 40));
 	display->setReadOnly(true);
+	display->setFocusPolicy(Qt::NoFocus);
 	display->setText("Помоги мне заработать лучше...");
 
 	// Виртуальная клавиатура получает ту же ширину, что и основное окно.
@@ -43,20 +46,25 @@ KeyBoardWindow::KeyBoardWindow(QWidget* parent) : QWidget(parent) {
 	connect(keyboard, &KeyBoard::text_key_pressed, this, &KeyBoardWindow::append_text);
 	connect(keyboard, &KeyBoard::backspace_pressed, this, &KeyBoardWindow::remove_last_character);
 	connect(keyboard, &KeyBoard::enter_pressed, this, &KeyBoardWindow::insert_line_break);
+	setFocus();
 }
 
 void KeyBoardWindow::keyPressEvent(QKeyEvent* event) {
-	// nativeVirtualKey позволяет сопоставить событие ОС с данными раскладки.
-	const int key = event->nativeVirtualKey();
-	if (keyboard->is_key_allowed(key)) {
-		// Допустимая клавиша запускает виртуальную кнопку и общий сигнал ввода.
-		keyboard->animate_button(key);
-	} else if (event->key() == Qt::Key_Backspace) {
+	// Сначала обрабатываем служебные клавиши, у которых нет символа в раскладке.
+	if (event->key() == Qt::Key_Backspace) {
 		keyboard->animate_backspace();
 	} else if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
 		keyboard->animate_enter();
 	} else if (event->key() == Qt::Key_Space) {
 		keyboard->animate_space();
+	} else if (keyboard->animate_button_by_text(event->text())) {
+		// На macOS текст события надёжно учитывает текущую раскладку и регистр.
+	} else {
+		// Сохраняем поддержку платформ, где nativeVirtualKey совпадает с таблицей кодов.
+		const int key = event->nativeVirtualKey();
+		if (keyboard->is_key_allowed(key)) {
+			keyboard->animate_button(key);
+		}
 	}
 }
 

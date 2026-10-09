@@ -10,4 +10,6 @@ KeyBoardButton::KeyBoardButton(const QString& text, QWidget* parent)
 	setFont(QFont("Roboto", 20));
 	setText(text);
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	// Фокус остаётся у главного окна, чтобы физические клавиши обрабатывались им.
+	setFocusPolicy(Qt::NoFocus);
 }

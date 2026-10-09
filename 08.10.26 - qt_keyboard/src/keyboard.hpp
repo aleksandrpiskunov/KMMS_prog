@@ -34,6 +34,8 @@ namespace biv {
 			
 			// Запускает короткую анимацию нажатия виртуальной кнопки.
 			void animate_button(const int code);
+			// Ищет кнопку по символу, который macOS передал в событии клавиатуры.
+			bool animate_button_by_text(const QString& text);
 			// Возвращает текст кнопки по коду физической клавиши.
 			QString get_key_text(const int code) const;
 			// Проверяет, должна ли клавиша участвовать в вводе текста.

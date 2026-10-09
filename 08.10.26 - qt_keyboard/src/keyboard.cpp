@@ -66,6 +66,19 @@ void KeyBoard::animate_button(const int code) {
 	buttons.at(code)->animateClick();
 }
 
+bool KeyBoard::animate_button_by_text(const QString& text) {
+	// На macOS nativeVirtualKey не совпадает с кодами в таблице, поэтому используем текст события.
+	const QString normalized_text = text.toUpper();
+	for (const auto& button: buttons) {
+		if (button.second->text() == normalized_text) {
+			button.second->animateClick();
+			return true;
+		}
+	}
+
+	return false;
+}
+
 QString KeyBoard::get_key_text(const int code) const {
 	// Текст виртуальной кнопки добавляется в поле вывода.
 	return buttons.at(code)->text();
@@ -110,7 +123,7 @@ void KeyBoard::create_buttons(
 		buttons[data[i].code] = btn;
 		connect(btn, &QPushButton::clicked, this, [this, btn]() {
 			// Клик по буквенной или цифровой кнопке передаёт её текст в окно.
-			emit text_key_pressed(btn->text());
+			text_key_pressed(btn->text());
 		});
 	}
 }
