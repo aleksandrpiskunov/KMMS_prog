@@ -16,7 +16,7 @@ KeyBoardWindow::KeyBoardWindow(QWidget* parent) : QWidget(parent) {
 	setFocusPolicy(Qt::StrongFocus);
 	
 	// Верхняя часть окна показывает изображение, связанное с оформлением проекта.
-	QPixmap pixmap("img/grustnii-smail.png");
+	QPixmap pixmap("img/veselyi_smail.png");
 	QLabel* image = new QLabel(this);
 	image->setFixedSize(200, 200);
 	image->setPixmap(pixmap);
