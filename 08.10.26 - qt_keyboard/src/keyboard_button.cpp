@@ -1,7 +1,7 @@
 #include "keyboard_button.hpp"
 
 #include <QSizePolicy>
-
+#include <iostream>
 using biv::KeyBoardButton;
 
 KeyBoardButton::KeyBoardButton(const QString& text, QWidget* parent)

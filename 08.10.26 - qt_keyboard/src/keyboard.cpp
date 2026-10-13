@@ -1,4 +1,5 @@
 #include "keyboard.hpp"
+#include <iostream>
 
 using biv::KeyBoard;
 
@@ -113,7 +114,7 @@ void KeyBoard::create_buttons(
 	const int line,
 	const int start_position
 ) {
-	// Каждая клавиша занимает две строки и две условные колонки.
+	// Каждая клавиша занимает две строки и две условные колонки
 	for (int i = 0; i < data.size(); i++) {
         KeyBoardButton* btn = new KeyBoardButton(data[i].text);
 		btn->setMinimumSize(button_width, button_width);
@@ -122,8 +123,10 @@ void KeyBoard::create_buttons(
 		
 		buttons[data[i].code] = btn;
 		connect(btn, &QPushButton::clicked, this, [this, btn]() {
-			// Клик по буквенной или цифровой кнопке передаёт её текст в окно.
-			text_key_pressed(btn->text());
+			// Клик по буквенной или цифровой кнопке передаёт её текст в окно
+			std::cout << "Кнопка нажата с помощью мыши" << std::endl;
+
+			text_key_pressed(btn->text()); // СИГНАЛ к append_text() в keyboard_window
 		});
 	}
 }

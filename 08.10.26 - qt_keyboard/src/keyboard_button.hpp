@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QString>
 #include <QWidget>
+#include <QMouseEvent>
 
 namespace biv {
 	// Кнопка клавиатуры хранит единый внешний вид для всех клавиш.

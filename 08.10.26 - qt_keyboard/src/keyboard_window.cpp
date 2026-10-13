@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QPixmap>
 #include <QVBoxLayout>
+#include <iostream>
 
 using biv::KeyBoardWindow;
 
@@ -50,6 +51,7 @@ KeyBoardWindow::KeyBoardWindow(QWidget* parent) : QWidget(parent) {
 }
 
 void KeyBoardWindow::keyPressEvent(QKeyEvent* event) {
+	std::cout << "Кнопка нажата с помощью клавы" << std::endl;
 	// Сначала обрабатываем служебные клавиши, у которых нет символа в раскладке.
 	if (event->key() == Qt::Key_Backspace) {
 		keyboard->animate_backspace();
@@ -71,7 +73,8 @@ void KeyBoardWindow::keyPressEvent(QKeyEvent* event) {
 void KeyBoardWindow::append_text(const QString& text) {
 	// Всегда вставляем символ в конец, чтобы физический и мышиный ввод совпадали.
 	display->moveCursor(QTextCursor::End);
-	display->insertPlainText(text);
+	display->insertPlainText(text); 
+	//класс из библио
 }
 
 void KeyBoardWindow::remove_last_character() {
