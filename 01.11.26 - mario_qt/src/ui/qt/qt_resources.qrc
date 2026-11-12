@@ -1,0 +1,13 @@
+<RCC>
+	<qresource prefix="/sprites">
+		<file alias="mario.svg">sprites/mario.svg</file>
+		<file alias="enemy.svg">sprites/enemy.svg</file>
+		<file alias="brick.svg">sprites/brick.svg</file>
+		<file alias="question.svg">sprites/question.svg</file>
+		<file alias="coin.svg">sprites/coin.svg</file>
+		<file alias="platform.svg">sprites/platform.svg</file>
+		<file alias="ground.svg">sprites/ground.svg</file>
+		<file alias="empty_block.svg">sprites/empty_block.svg</file>
+		<file alias="final_ship.svg">sprites/final_ship.svg</file>
+	</qresource>
+</RCC>
