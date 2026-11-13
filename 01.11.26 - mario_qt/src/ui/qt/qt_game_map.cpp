@@ -27,6 +27,7 @@ namespace {
 
 QtGameMap::QtGameMap(int height, int width, Game* game)
 	: QWidget(nullptr), GameMap(height, width), game(game), map_width(width) {
+	// Загружает встроенные Qt-ресурсы и создаёт игровое окно.
 	for (std::size_t i = 0; i < sprites.size(); ++i) {
 		sprites[i].load(sprite_paths.at(static_cast<qsizetype>(i)));
 		if (sprites[i].isNull()) {
@@ -42,19 +43,23 @@ QtGameMap::QtGameMap(int height, int width, Game* game)
 }
 
 void QtGameMap::add_obj(biv::QtUIObject* object) {
+	// Регистрирует объект модели в представлении для последующей отрисовки.
 	objects.push_back(object);
 }
 
 void QtGameMap::remove_obj(biv::QtUIObject* object) {
+	// Удаляет объект из списка представления перед его уничтожением фабрикой.
 	objects.erase(std::remove(objects.begin(), objects.end(), object), objects.end());
 }
 
 void QtGameMap::show() const noexcept {
+	// Показывает окно и просит Qt перерисовать его содержимое.
 	const_cast<QtGameMap*>(this)->QWidget::show();
 	const_cast<QtGameMap*>(this)->update();
 }
 
 void QtGameMap::draw_sprite(QPainter& painter, const QtUIObject& object, const QRect& target) const {
+	// Выбирает спрайт по состоянию объекта и заполняет им область модели.
 	const QtObjectKind kind = object.get_kind();
 	if (object.is_empty()) {
 		if (!empty_block_sprite.isNull()) {
@@ -95,6 +100,7 @@ void QtGameMap::draw_sprite(QPainter& painter, const QtUIObject& object, const Q
 }
 
 void QtGameMap::paintEvent(QPaintEvent*) {
+	// Рисует фон, декорации и активные игровые объекты каждого кадра.
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::SmoothPixmapTransform, false);
 	painter.fillRect(rect(), QColor(142, 135, 224));
@@ -144,4 +150,6 @@ void QtGameMap::paintEvent(QPaintEvent*) {
 	}
 }
 
-void QtGameMap::keyPressEvent(QKeyEvent*) {}
+void QtGameMap::keyPressEvent(QKeyEvent*) {
+	// Клавиши перехватывает QtKeyboard через глобальный фильтр событий.
+}

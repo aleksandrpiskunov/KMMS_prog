@@ -7,10 +7,12 @@
 using biv::QtKeyboard;
 
 QtKeyboard::QtKeyboard(QCoreApplication* application) : application(application) {
+	// Подключает объект к очереди Qt-событий без обращения к API macOS/Linux.
 	application->installEventFilter(this);
 }
 
 biv::UserInput QtKeyboard::get_user_input() {
+	// Обрабатывает накопленные Qt-события и преобразует их в UserInput модели.
 	application->processEvents(QEventLoop::AllEvents, 1);
 	if (exit) {
 		return UserInput::EXIT;
@@ -28,9 +30,12 @@ biv::UserInput QtKeyboard::get_user_input() {
 	return UserInput::NO_INPUT;
 }
 
-void QtKeyboard::on() {}
+void QtKeyboard::on() {
+	// Фильтр устанавливается в конструкторе, поэтому отдельно включать его не нужно.
+}
 
 void QtKeyboard::off() {
+	// Сбрасывает нажатые клавиши и события перед перезапуском уровня.
 	left = false;
 	right = false;
 	jump = false;
@@ -38,6 +43,7 @@ void QtKeyboard::off() {
 }
 
 bool QtKeyboard::eventFilter(QObject*, QEvent* event) {
+	// Запоминает состояние клавиш, полученное от Qt, не изменяя игровой контроллер.
 	if (event->type() != QEvent::KeyPress && event->type() != QEvent::KeyRelease) {
 		return false;
 	}

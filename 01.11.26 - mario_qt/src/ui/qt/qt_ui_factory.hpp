@@ -17,6 +17,7 @@ namespace biv {
 			T* add_object(Args&&... args);
 
 		public:
+			// Сохраняет ссылку на контроллер, которому фабрика регистрирует модели.
 			explicit QtUIFactory(Game* game) : UIFactory(game) {}
 			~QtUIFactory();
 			void clear_data() override;

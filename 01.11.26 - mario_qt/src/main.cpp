@@ -82,8 +82,7 @@ int main(int argc, char** argv) {
 	
 	biv::Game game;
 #ifdef QT_UI
-	biv::QtUIFactory qt_ui_factory(&game);
-	biv::UIFactory* ui_factory = &qt_ui_factory;
+	biv::UIFactory* ui_factory = new biv::QtUIFactory(&game);
 #else
 	biv::UIFactory* ui_factory = new biv::ConsoleUIFactory(&game);
 #endif
