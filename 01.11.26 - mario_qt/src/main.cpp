@@ -23,6 +23,7 @@
 */
 #include <thread>
 
+#include "app_factory.hpp"
 #include "console_ui_factory.hpp"
 #include "first_level.hpp"
 #include "game.hpp"
@@ -35,7 +36,6 @@
 
 #ifdef QT_UI
 	#include <QApplication>
-	#include "qt_keyboard.hpp"
 	#include "qt_ui_factory.hpp"
 #endif
 
@@ -57,24 +57,23 @@ int main(int argc, char** argv) {
 	const int map_weight = 200;
 	auto frame_delay = std::chrono::milliseconds(0);
 	
-	biv::OSControlSettings* control_settings = nullptr;
-	biv::KeyBoard* keyboard = nullptr;
 #ifdef QT_UI
 	QApplication application(argc, argv);
-	biv::QtKeyboard qt_keyboard(&application);
-	keyboard = &qt_keyboard;
+	biv::AppFactory app_factory(map_height, map_weight, &application);
+#else
+	biv::AppFactory app_factory(map_height, map_weight);
+#endif
+
+#ifdef QT_UI
+	frame_delay = std::chrono::milliseconds(20);
+#elif defined(WINDOWS_CONSOLE)
+	frame_delay = std::chrono::milliseconds(10);
+#elif defined(LINUX_CONSOLE)
 	frame_delay = std::chrono::milliseconds(20);
 #endif
-	#ifdef WINDOWS_CONSOLE
-		control_settings = new biv::WindowsControlSettings();
-		keyboard = new biv::WindowsKeyBoard();
-		frame_delay = std::chrono::milliseconds(10);
-	#elif defined(LINUX_CONSOLE)
-		control_settings = new biv::LinuxControlSettings(map_height, map_weight);
-		keyboard = new biv::LinuxKeyboard();
-		frame_delay = std::chrono::milliseconds(20);
-	#endif
-	
+
+	biv::OSControlSettings* control_settings = app_factory.get_control_settings();
+	biv::KeyBoard* keyboard = app_factory.get_keyboard();
 	if (control_settings != nullptr) {
 		control_settings->init();
 	}

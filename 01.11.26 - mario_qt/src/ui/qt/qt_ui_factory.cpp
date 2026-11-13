@@ -77,7 +77,10 @@ void QtUIFactory::create_money(const Coord& p, int w, int h) {
 void QtUIFactory::create_moving_platform(const Coord& p, int w, int h, int r) {
 	// Создаёт платформу и подключает её к движению, физике и коллизиям.
 	auto* object = add_object<QtMovingPlatform>(p, w, h, r);
-	game->add_collisionable(object); game->add_map_movable(object); game->add_movable(object); game->add_static_obj(object);
+	game->add_collisionable(object); 
+	game->add_map_movable(object); 
+	game->add_movable(object); 
+	game->add_static_obj(object);
 }
 void QtUIFactory::create_ship(const Coord& p, int w, int h) {
 	// Создаёт обычную часть платформы уровня.
