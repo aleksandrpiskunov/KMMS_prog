@@ -1,5 +1,6 @@
 target_sources(${PROJECT_NAME}
 	PRIVATE
+		qt_app_factory.cpp
 		qt_game_map.cpp
 		qt_keyboard.cpp
 		qt_ui_factory.cpp

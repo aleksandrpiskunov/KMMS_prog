@@ -23,7 +23,6 @@
 */
 #include <thread>
 
-#include "app_factory.hpp"
 #include "console_ui_factory.hpp"
 #include "first_level.hpp"
 #include "game.hpp"
@@ -36,15 +35,14 @@
 
 #ifdef QT_UI
 	#include <QApplication>
+	#include "qt_app_factory.hpp"
 	#include "qt_ui_factory.hpp"
 #endif
 
 #ifdef WINDOWS_CONSOLE
-	#include "windows_control_settings.hpp"
-	#include "windows_keyboard.hpp"
+	#include "windows_app_factory.hpp"
 #elif defined(LINUX_CONSOLE)
-	#include "linux_control_settings.hpp"
-	#include "linux_keyboard.hpp"
+	#include "linux_app_factory.hpp"
 	#include "ncurses.h"
 #endif
 
@@ -59,9 +57,11 @@ int main(int argc, char** argv) {
 	
 #ifdef QT_UI
 	QApplication application(argc, argv);
-	biv::AppFactory app_factory(map_height, map_weight, &application);
-#else
-	biv::AppFactory app_factory(map_height, map_weight);
+	biv::QtAppFactory app_factory(&application);
+#elif defined(WINDOWS_CONSOLE)
+	biv::WindowsAppFactory app_factory;
+#elif defined(LINUX_CONSOLE)
+	biv::LinuxAppFactory app_factory(map_height, map_weight);
 #endif
 
 #ifdef QT_UI

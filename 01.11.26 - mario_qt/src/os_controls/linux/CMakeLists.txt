@@ -1,5 +1,6 @@
 target_sources(${PROJECT_NAME}
 	PRIVATE
+		linux_app_factory.cpp
 		linux_control_settings.cpp
 		linux_keyboard.cpp
 )

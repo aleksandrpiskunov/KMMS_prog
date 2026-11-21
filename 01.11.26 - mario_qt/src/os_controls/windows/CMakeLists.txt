@@ -1,5 +1,6 @@
 target_sources(${PROJECT_NAME}
 	PRIVATE
+		windows_app_factory.cpp
 		windows_control_settings.cpp
 		windows_keyboard.cpp
 )
